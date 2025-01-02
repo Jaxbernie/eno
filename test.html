@@ -1,100 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登录框示例</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>花旗骰投注界面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2d2f3a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
 
-    .login-container {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 300px;
-    }
+        .casino-table {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
 
-    .login-container h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #333;
-    }
+        .table-title {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .login-container label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 14px;
-      color: #333;
-    }
+        .betting-area {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
 
-    .login-container input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0 20px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
+        .bet-zone {
+            padding: 15px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 120px;
+            text-align: center;
+        }
 
-    .login-container button {
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      border: none;
-      border-radius: 4px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+        .bet-zone:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
 
-    .login-container button:hover {
-      background-color: #45a049;
-    }
+        .dice-container {
+            text-align: center;
+            margin-top: 30px;
+        }
 
-    .forgot-password {
-      text-align: center;
-      font-size: 12px;
-      margin-top: 10px;
-    }
+        .dice {
+            font-size: 50px;
+            margin: 0 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            color: #333;
+        }
 
-    .forgot-password a {
-      color: #4CAF50;
-      text-decoration: none;
-    }
+        .roll-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
 
-    .forgot-password a:hover {
-      text-decoration: underline;
-    }
-  </style>
+        .roll-button:hover {
+            background-color: #45a049;
+        }
+
+        .bet-info {
+            font-size: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .clear-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #e53935;
+        }
+
+        .total-sum {
+            font-size: 25px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="login-container">
-    <h2>登录</h2>
-    <form action="#" method="POST">
-      <label for="username">用户名</label>
-      <input type="text" id="username" name="username" required placeholder="请输入用户名">
-      
-      <label for="password">密码</label>
-      <input type="password" id="password" name="password" required placeholder="请输入密码">
-      
-      <button type="submit">登录</button>
-    </form>
-    
-    <div class="forgot-password">
-      <a href="#">忘记密码?</a>
+<div class="casino-table">
+    <div class="table-title">花旗骰投注界面</div>
+
+    <!-- 投注区域 -->
+    <div class="betting-area">
+        <div class="bet-zone" onclick="placeBet('Pass Line')">Pass Line</div>
+        <div class="bet-zone" onclick="placeBet('Don\'t Pass Line')">Don't Pass Line</div>
+        <div class="bet-zone" onclick="placeBet('Come')">Come</div>
+        <div class="bet-zone" onclick="placeBet('Don\'t Come')">Don't Come</div>
     </div>
-  </div>
+
+    <!-- 当前投注信息 -->
+    <div class="bet-info" id="betInfo">
+        <p>请选择一个投注选项</p>
+    </div>
+
+    <!-- 骰子显示区域 -->
+    <div class="dice-container">
+        <div class="dice" id="dice1">1</div>
+        <div class="dice" id="dice2">1</div>
+    </div>
+
+    <!-- 投掷骰子的按钮 -->
+    <button class="roll-button" onclick="rollDice()">投掷骰子</button>
+
+    <!-- 显示骰子总和 -->
+    <div class="total-sum" id="totalSum">骰子总和: 2</div>
+
+    <!-- 清除投注按钮 -->
+    <button class="clear-button" onclick="clearBet()">清除投注</button>
+</div>
+
+<script>
+    let currentBet = ''; // 当前投注
+
+    // 选择投注类型
+    function placeBet(betType) {
+        currentBet = betType;
+        document.getElementById("betInfo").innerHTML = `<p>您已选择：${betType}</p>`;
+    }
+
+    // 清除当前投注
+    function clearBet() {
+        currentBet = '';
+        document.getElementById("betInfo").innerHTML = `<p>请选择一个投注选项</p>`;
+    }
+
+    // 随机生成两个骰子
+    function rollDice() {
+        let dice1 = Math.floor(Math.random() * 6) + 1;
+        let dice2 = Math.floor(Math.random() * 6) + 1;
+
+        document.getElementById("dice1").textContent = dice1;
+        document.getElementById("dice2").textContent = dice2;
+
+        let total = dice1 + dice2;
+        document.getElementById("totalSum").textContent = `骰子总和: ${total}`;
+
+        // 打印骰子总和（可选）
+        console.log(`骰子总和：${total}`);
+    }
+</script>
 
 </body>
 </html>
