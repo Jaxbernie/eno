@@ -3,176 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>花旗骰投注界面</title>
+    <title>花旗骰简易投掷界面展示</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #2d2f3a;
             color: white;
+            text-align: center;
             margin: 0;
             padding: 0;
         }
 
-        .casino-table {
-            width: 80%;
-            margin: 50px auto;
+        .table-container {
+            margin: 20px auto;
+            max-width: 600px;
             padding: 20px;
-            background-color: #1a1a1a;
-            border-radius: 20px;
-            position: relative;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .table-title {
-            font-size: 30px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .betting-area {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-
-        .bet-zone {
-            padding: 15px;
-            font-size: 18px;
-            background-color: #4CAF50;
+            background-color: #3a3b4f;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 120px;
-            text-align: center;
-        }
-
-        .bet-zone:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
-        }
-
-        .dice-container {
-            text-align: center;
-            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .dice {
-            font-size: 50px;
-            margin: 0 20px;
-            padding: 20px;
-            background-color: #fff;
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            margin: 10px;
+            background-color: white;
+            color: black;
+            font-size: 36px;
+            line-height: 70px;
+            text-align: center;
             border-radius: 10px;
-            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .roll-button {
+            display: inline-block;
+            margin: 20px auto;
             padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
+            background-color: #ff5722;
             color: white;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
             transition: background-color 0.3s;
         }
 
         .roll-button:hover {
-            background-color: #45a049;
+            background-color: #e64a19;
         }
 
-        .bet-info {
-            font-size: 20px;
-            text-align: center;
+        .result {
             margin-top: 20px;
+            font-size: 18px;
         }
 
-        .clear-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .result.success {
+            color: #4caf50; /* 绿色，表示获胜 */
+        }
+
+        .result.tie {
+            color: #ffeb3b; /* 黄色，表示平局 */
+        }
+
+        .current-point {
             margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-
-        .clear-button:hover {
-            background-color: #e53935;
-        }
-
-        .total-sum {
-            font-size: 25px;
-            margin-top: 20px;
+            font-size: 18px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="casino-table">
-    <div class="table-title">花旗骰投注界面</div>
+<div class="table-container">
+    <h1>花旗骰简易投掷界面展示</h1>
 
-    <!-- 投注区域 -->
-    <div class="betting-area">
-        <div class="bet-zone" onclick="placeBet('Pass Line')">Pass Line</div>
-        <div class="bet-zone" onclick="placeBet('Don\'t Pass Line')">Don't Pass Line</div>
-        <div class="bet-zone" onclick="placeBet('Come')">Come</div>
-        <div class="bet-zone" onclick="placeBet('Don\'t Come')">Don't Come</div>
-    </div>
-
-    <!-- 当前投注信息 -->
-    <div class="bet-info" id="betInfo">
-        <p>请选择一个投注选项</p>
-    </div>
-
-    <!-- 骰子显示区域 -->
     <div class="dice-container">
         <div class="dice" id="dice1">1</div>
         <div class="dice" id="dice2">1</div>
     </div>
 
-    <!-- 投掷骰子的按钮 -->
-    <button class="roll-button" onclick="rollDice()">投掷骰子</button>
+    <button class="roll-button" onclick="rollDice()">掷骰子</button>
 
-    <!-- 显示骰子总和 -->
-    <div class="total-sum" id="totalSum">骰子总和: 2</div>
-
-    <!-- 清除投注按钮 -->
-    <button class="clear-button" onclick="clearBet()">清除投注</button>
+    <div class="current-point" id="currentPoint">当前点数：无</div>
+    <div class="result" id="result">结果将在这里显示</div>
 </div>
 
 <script>
-    let currentBet = ''; // 当前投注
+    let point = null; // 初始点数
+    let gamePhase = "start"; // 游戏阶段
 
-    // 选择投注类型
-    function placeBet(betType) {
-        currentBet = betType;
-        document.getElementById("betInfo").innerHTML = `<p>您已选择：${betType}</p>`;
-    }
-
-    // 清除当前投注
-    function clearBet() {
-        currentBet = '';
-        document.getElementById("betInfo").innerHTML = `<p>请选择一个投注选项</p>`;
-    }
-
-    // 随机生成两个骰子
     function rollDice() {
-        let dice1 = Math.floor(Math.random() * 6) + 1;
-        let dice2 = Math.floor(Math.random() * 6) + 1;
+        const dice1 = Math.floor(Math.random() * 6) + 1;
+        const dice2 = Math.floor(Math.random() * 6) + 1;
+        const total = dice1 + dice2;
 
-        document.getElementById("dice1").textContent = dice1;
-        document.getElementById("dice2").textContent = dice2;
+        // 更新骰子显示
+        document.getElementById('dice1').textContent = dice1;
+        document.getElementById('dice2').textContent = dice2;
 
-        let total = dice1 + dice2;
-        document.getElementById("totalSum").textContent = `骰子总和: ${total}`;
+        // 游戏逻辑
+        const resultDiv = document.getElementById('result');
+        if (gamePhase === "start") {
+            if (total === 7 || total === 11) {
+                resultDiv.textContent = "Pass Line 获胜！";
+                resultDiv.className = "result success";
+            } else if (total === 2 || total === 3) {
+                resultDiv.textContent = "Don't Pass Line 获胜！";
+                resultDiv.className = "result success";
+            } else if (total === 12) {
+                resultDiv.textContent = "平局！退回本金！";
+                resultDiv.className = "result tie";
+            } else {
+                point = total;
+                gamePhase = "point";
+                document.getElementById('currentPoint').textContent = `当前点数：${point}`;
+                resultDiv.textContent = "进入下一阶段，请继续投掷骰子！";
+                resultDiv.className = "result";
+            }
+        } else if (gamePhase === "point") {
+            if (total === point) {
+                resultDiv.textContent = "Pass Line 获胜！";
+                resultDiv.className = "result success";
+                resetGame();
+            } else if (total === 7) {
+                resultDiv.textContent = "Don't Pass Line 获胜！";
+                resultDiv.className = "result success";
+                resetGame();
+            } else {
+                resultDiv.textContent = `当前投掷点数：${total}，请继续！`;
+                resultDiv.className = "result";
+            }
+        }
+    }
 
-        // 打印骰子总和（可选）
-        console.log(`骰子总和：${total}`);
+    function resetGame() {
+        point = null;
+        gamePhase = "start";
+        document.getElementById('currentPoint').textContent = "当前点数：无";
     }
 </script>
 
