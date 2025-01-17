@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机选择三个位置</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            border: 1px solid #ccc;
+            font-size: 18px;
+        }
+        .highlight-1 {
+            background-color: red;
+            color: white;
+        }
+        .highlight-2 {
+            background-color: green;
+            color: white;
+            border: 2px solid #ccc;
+        }
+        .highlight-x {
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>使用12x12 数据表模拟了pulaputi玩法</h1>
+<table id="data-table">
+    <!-- 这里会通过 JavaScript 动态生成表格内容 -->
+</table>
+
+<button onclick="highlightRandomCells()">随机选择三个位置</button>
+
+<script>
+// 12x12 的数据表
+const data = [
+    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 'X', 1, 2, 1],
+    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+    [1, 2, 'X', 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+    [2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 1]
+];
+
+// 动态生成表格
+function generateTable() {
+    const table = document.getElementById("data-table");
+    for (let row = 0; row < 12; row++) {
+        let tr = document.createElement("tr");
+        for (let col = 0; col < 12; col++) {
+            let td = document.createElement("td");
+            td.textContent = data[row][col];
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+}
+
+// 随机选择三个位置
+function highlightRandomCells() {
+    // 扁平化数据
+    let positions = [];
+    for (let row = 0; row < 12; row++) {
+        for (let col = 0; col < 12; col++) {
+            positions.push({ row, col });
+        }
+    }
+
+    // 随机选择 3 个位置
+    let selectedPositions = [];
+    while (selectedPositions.length < 3) {
+        let randomIndex = Math.floor(Math.random() * positions.length);
+        let randomPosition = positions[randomIndex];
+
+        // 确保不重复选择
+        if (!selectedPositions.some(pos => pos.row === randomPosition.row && pos.col === randomPosition.col)) {
+            selectedPositions.push(randomPosition);
+        }
+    }
+
+    // 清除之前的高亮
+    let cells = document.querySelectorAll('td');
+    cells.forEach(cell => {
+        cell.classList.remove('highlight-1', 'highlight-2', 'highlight-x');
+    });
+
+    // 高亮选择的三个位置
+    selectedPositions.forEach(pos => {
+        let row = pos.row;
+        let col = pos.col;
+        let cell = document.querySelector(`#data-table tr:nth-child(${row + 1}) td:nth-child(${col + 1})`);
+        if (data[row][col] === 1) {
+            cell.classList.add('highlight-1');
+        } else if (data[row][col] === 2) {
+            cell.classList.add('highlight-2');
+        } else if (data[row][col] === 'X') {
+            cell.classList.add('highlight-x');
+        }
+    });
+}
+
+// 初始化表格
+generateTable();
+</script>
+
+</body>
+</html>

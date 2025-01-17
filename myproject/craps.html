@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽象模拟花旗骰的投掷结果</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #ccc;
+            font-size: 18px;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>抽象模拟花旗骰</h1>
+<table id="data-table">
+    <!-- 这里会通过 JavaScript 动态生成表格内容 -->
+</table>
+
+<button onclick="highlightAndSum()">模拟掷骰</button>
+
+<div id="result"></div>
+
+<script>
+// 定义数字数组
+const data = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6];
+
+// 动态生成 3x4 的表格
+function generateTable() {
+    const table = document.getElementById("data-table");
+    let index = 0;
+
+    for (let row = 0; row < 3; row++) {
+        let tr = document.createElement("tr");
+        for (let col = 0; col < 4; col++) {
+            let td = document.createElement("td");
+            td.textContent = data[index];
+            td.dataset.index = index; // 保存索引
+            tr.appendChild(td);
+            index++;
+        }
+        table.appendChild(tr);
+    }
+}
+
+// 随机选择两个不同的数字并求和
+function highlightAndSum() {
+    const cells = Array.from(document.querySelectorAll("#data-table td"));
+
+    // 清除之前的高亮
+    cells.forEach(cell => cell.classList.remove("highlight"));
+
+    // 随机选择两个不同的索引
+    let index1 = Math.floor(Math.random() * data.length);
+    let index2;
+
+    do {
+        index2 = Math.floor(Math.random() * data.length);
+    } while (index1 === index2);
+
+    // 高亮选择的两个单元格
+    cells[index1].classList.add("highlight");
+    cells[index2].classList.add("highlight");
+
+    // 计算求和结果
+    const sum = data[index1] + data[index2];
+    document.getElementById("result").textContent = `骰子点数 ${data[index1]} 和 ${data[index2]}，开奖结果 ${sum}。`;
+}
+
+// 初始化表格
+generateTable();
+</script>
+
+</body>
+</html>
