@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Dice Throw</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Click to throw the dice!</div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 0.8);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(10, 10);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        scene.add(ground);
+
+        // Dice textures
+        const loader = new THREE.TextureLoader();
+        const diceMaterials = [
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-1.png') }),
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-2.png') }),
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-3.png') }),
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-4.png') }),
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-5.png') }),
+            new THREE.MeshStandardMaterial({ map: loader.load('https://example.com/dice-6.png') }),
+        ];
+
+        // Create two dice
+        const diceGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const dice1 = new THREE.Mesh(diceGeometry, diceMaterials);
+        const dice2 = new THREE.Mesh(diceGeometry, diceMaterials);
+        dice1.position.set(-3, 1, 0); // Dice 1 starting position
+        dice2.position.set(-4, 1, -1); // Dice 2 starting position
+        scene.add(dice1);
+        scene.add(dice2);
+
+        // Camera position
+        camera.position.set(0, 5, 5);
+        camera.lookAt(0, 0, 0);
+
+        // Animation variables
+        let isThrowing = false;
+        let result1 = 0, result2 = 0;
+
+        // Final rotation angles for each face
+        const faceRotations = [
+            { face: 1, rotation: [0, 0, 0] },
+            { face: 2, rotation: [Math.PI / 2, 0, 0] },
+            { face: 3, rotation: [0, Math.PI / 2, 0] },
+            { face: 4, rotation: [0, -Math.PI / 2, 0] },
+            { face: 5, rotation: [-Math.PI / 2, 0, 0] },
+            { face: 6, rotation: [Math.PI, 0, 0] },
+        ];
+
+        // Throw dice
+        function throwDice() {
+            if (isThrowing) return;
+
+            isThrowing = true;
+            result1 = Math.ceil(Math.random() * 6);
+            result2 = Math.ceil(Math.random() * 6);
+
+            const finalRotation1 = faceRotations.find(f => f.face === result1).rotation;
+            const finalRotation2 = faceRotations.find(f => f.face === result2).rotation;
+
+            let t = 0; // Time variable for animation
+            const startPosition1 = { x: -3, y: 1, z: 0 };
+            const endPosition1 = { x: 3, y: 0.5, z: 0 };
+            const startPosition2 = { x: -4, y: 1, z: -1 };
+            const endPosition2 = { x: 2, y: 0.5, z: -1 };
+
+            const animation = setInterval(() => {
+                t += 0.02;
+
+                // Parabolic trajectory for Dice 1
+                dice1.position.x = startPosition1.x + (endPosition1.x - startPosition1.x) * t;
+                dice1.position.y = startPosition1.y + 5 * t * (1 - t); // Parabola
+                dice1.rotation.x += Math.PI * 0.2;
+                dice1.rotation.y += Math.PI * 0.2;
+                dice1.rotation.z += Math.PI * 0.2;
+
+                // Parabolic trajectory for Dice 2
+                dice2.position.x = startPosition2.x + (endPosition2.x - startPosition2.x) * t;
+                dice2.position.y = startPosition2.y + 5 * t * (1 - t);
+                dice2.rotation.x += Math.PI * 0.2;
+                dice2.rotation.y += Math.PI * 0.2;
+                dice2.rotation.z += Math.PI * 0.2;
+
+                if (t >= 1) {
+                    clearInterval(animation);
+
+                    // Set final position and rotation for both dice
+                    dice1.position.set(endPosition1.x, endPosition1.y, endPosition1.z);
+                    dice2.position.set(endPosition2.x, endPosition2.y, endPosition2.z);
+                    dice1.rotation.set(...finalRotation1);
+                    dice2.rotation.set(...finalRotation2);
+
+                    const total = result1 + result2;
+                    document.getElementById("info").innerText = `Result: ${result1} + ${result2} = ${total} points`;
+                    isThrowing = false;
+                }
+            }, 16); // 60 FPS
+        }
+
+        // Event listener
+        window.addEventListener('click', throwDice);
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

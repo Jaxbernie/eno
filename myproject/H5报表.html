@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .filter {
+            display: flex;
+            gap: 10px;
+        }
+        .filter button {
+            padding: 5px 10px;
+            border: 1px solid #007BFF;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #007BFF;
+            cursor: pointer;
+        }
+        .filter button.active {
+            background-color: #007BFF;
+            color: white;
+        }
+        .filter button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table thead {
+            background-color: #007BFF;
+            color: white;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* 合并Game Number和Bet Content列 */
+        .game-bet-cell {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-bet-cell span {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            table th, table td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .header h1 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Select Time</h1>
+            <div class="filter">
+                <button id="btn1d" onclick="filterData('1d')" class="active">1 day</button>
+                <button id="btn1w" onclick="filterData('1w')">7 days</button>
+                <button id="btn1m" onclick="filterData('1m')">30 days</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>GameNO <hr> Bet Content</th>
+                    <th>Bet Amount</th>
+                    <th>Roll Result</th>
+                    <th>Win/Lose</th>
+                </tr>
+            </thead>
+            <tbody id="recordTable">
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231530</span>
+                        <span>PassLine</span>
+                    </td>
+                    <td>100</td>
+                    <td>7(2,5) &nbsp;&nbsp;&nbsp; </td>
+                    <td>+200</td>
+                </tr>
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231540</span>
+                        <span>Filed</span>
+                    </td>
+                    <td>100</td>
+                    <td>5(1,4)&nbsp;&nbsp;&nbsp;</td>
+                    <td>-100</td>
+                </tr>
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231550</span>
+                        <span>HARDWAYS-(2,2)</span>
+                    </td>
+                    <td>100</td>
+                    <td>4(2,2)&nbsp;&nbsp;&nbsp;</td>
+                    <td>+800</td>
+                </tr>
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231630</span>
+                        <span>Lose-5</span>
+                    </td>
+                    <td>100</td>
+                    <td>5(3,2)&nbsp;&nbsp;&nbsp;</td>
+                    <td>+166.67</td>
+                </tr>
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231730</span>
+                        <span>Win-5</span>
+                    </td>
+                    <td>100</td>
+                    <td>6(3,3)&nbsp;&nbsp;&nbsp;</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td class="game-bet-cell">
+                        <span>202501231830</span>
+                        <span>Lose-5</span>
+                    </td>
+                    <td>100</td>
+                    <td>7(1,6)&nbsp;&nbsp;&nbsp;</td>
+                    <td>-100</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterData(period) {
+            // 移除所有按钮的 active 类
+            document.querySelectorAll('.filter button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 给当前点击的按钮添加 active 类
+            document.getElementById(`btn${period}`).classList.add('active');
+
+            // 在这里添加日期过滤的逻辑
+            const table = document.getElementById('recordTable');
+            const rows = table.querySelectorAll('tr');
+            const now = new Date();
+            rows.forEach(row => {
+                const timeCell = row.children[0];
+                const recordTimeStr = timeCell.querySelector('span:first-child').textContent;
+                const recordTime = new Date(recordTimeStr.substring(0, 4), recordTimeStr.substring(4, 6) - 1, recordTimeStr.substring(6, 8),
+                                           recordTimeStr.substring(8, 10), recordTimeStr.substring(10, 12));
+                let isVisible = false;
+
+                // 根据选择的日期范围过滤记录
+                if (period === '1d') {
+                    isVisible = now - recordTime <= 24 * 60 * 60 * 1000;
+                } else if (period === '1w') {
+                    isVisible = now - recordTime <= 7 * 24 * 60 * 60 * 1000;
+                } else if (period === '1m') {
+                    isVisible = now - recordTime <= 30 * 24 * 60 * 60 * 1000;
+                }
+
+                row.style.display = isVisible ? '' : 'none';
+            });
+        }
+
+        // 初始化默认选中状态
+        window.onload = function() {
+            filterData('1d');
+        };
+    </script>
+</body>
+</html>
