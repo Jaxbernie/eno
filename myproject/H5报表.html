@@ -1,214 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Time</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 18px;
-            margin: 0;
-        }
-        .filter {
-            display: flex;
-            gap: 10px;
-        }
-        .filter button {
-            padding: 5px 10px;
-            border: 1px solid #007BFF;
-            border-radius: 4px;
-            background-color: #fff;
-            color: #007BFF;
-            cursor: pointer;
-        }
-        .filter button.active {
-            background-color: #007BFF;
-            color: white;
-        }
-        .filter button:hover {
-            background-color: #0056b3;
-            color: white;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table thead {
-            background-color: #007BFF;
-            color: white;
-        }
-        table th, table td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        /* 合并Game Number和Bet Content列 */
-        .game-bet-cell {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .game-bet-cell span {
-            display: block;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betting Record Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .container {
+      padding: 20px;
+    }
+    .query-section {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap; /* Prevent wrapping */
+    }
+    .query-section button {
+      font-size: 12px; /* Smaller font size */
+      padding: 4px 10px; /* Smaller padding */
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      transition: background-color 0.3s ease;
+    }
+    .query-section button.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    .query-section span {
+      font-size: 12px; /* Smaller font size */
+      font-weight: bold;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+    .bet-info p {
+      margin: 4px 0;
+      padding: 2px;
+      line-height: 1.6;
+    }
+    .toggle-btn, .replay-btn {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 10px; /* Smaller font size */
+      transition: background-color 0.3s ease;
+    }
+    .toggle-btn:hover, .replay-btn:hover {
+      background-color: #0056b3;
+    }
+    .details-row td {
+      background-color: #eef6ff;
+      text-align: left;
+      padding: 8px 12px;
+    }
+    .hidden {
+      display: none;
+    }
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+      padding: 20px;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: none;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content iframe {
+      width: 100%;
+      height: 300px;
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+    }
 
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            table th, table td {
-                font-size: 14px;
-                padding: 8px;
-            }
-            .header h1 {
-                font-size: 16px;
-            }
-        }
-    </style>
+    /* Responsive styles for small screens */
+    @media (max-width: 600px) {
+      .bet-info p {
+        font-size: 12px;
+      }
+
+      .query-section {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .query-section button {
+        font-size: 12px;
+        padding: 6px 10px;
+        width: 80px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 10px 5px;
+      }
+
+      .toggle-btn, .replay-btn {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Select Time</h1>
-            <div class="filter">
-                <button id="btn1d" onclick="filterData('1d')" class="active">1 day</button>
-                <button id="btn1w" onclick="filterData('1w')">7 days</button>
-                <button id="btn1m" onclick="filterData('1m')">30 days</button>
-            </div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>GameNO <hr> Bet Content</th>
-                    <th>Bet Amount</th>
-                    <th>Roll Result</th>
-                    <th>Win/Lose</th>
-                </tr>
-            </thead>
-            <tbody id="recordTable">
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231530</span>
-                        <span>PassLine</span>
-                    </td>
-                    <td>100</td>
-                    <td>7(2,5) &nbsp;&nbsp;&nbsp; </td>
-                    <td>+200</td>
-                </tr>
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231540</span>
-                        <span>Filed</span>
-                    </td>
-                    <td>100</td>
-                    <td>5(1,4)&nbsp;&nbsp;&nbsp;</td>
-                    <td>-100</td>
-                </tr>
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231550</span>
-                        <span>HARDWAYS-(2,2)</span>
-                    </td>
-                    <td>100</td>
-                    <td>4(2,2)&nbsp;&nbsp;&nbsp;</td>
-                    <td>+800</td>
-                </tr>
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231630</span>
-                        <span>Lose-5</span>
-                    </td>
-                    <td>100</td>
-                    <td>5(3,2)&nbsp;&nbsp;&nbsp;</td>
-                    <td>+166.67</td>
-                </tr>
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231730</span>
-                        <span>Win-5</span>
-                    </td>
-                    <td>100</td>
-                    <td>6(3,3)&nbsp;&nbsp;&nbsp;</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td class="game-bet-cell">
-                        <span>202501231830</span>
-                        <span>Lose-5</span>
-                    </td>
-                    <td>100</td>
-                    <td>7(1,6)&nbsp;&nbsp;&nbsp;</td>
-                    <td>-100</td>
-                </tr>
-            </tbody>
-        </table>
+  <div class="container">
+    <!-- Query Buttons -->
+    <div class="query-section">
+      <button onclick="filterRecords('today')" id="btn-today">Today</button>
+      <button onclick="filterRecords(3)" id="btn-3-days">3Days</button>
+      <button onclick="filterRecords(7)" id="btn-7-days">7Days</button>
+      <button onclick="filterRecords(30)" id="btn-30-days">30Days</button>
     </div>
 
-    <script>
-        function filterData(period) {
-            // 移除所有按钮的 active 类
-            document.querySelectorAll('.filter button').forEach(btn => {
-                btn.classList.remove('active');
-            });
+    <!-- No Data Message -->
+    <div id="no-data-message" class="no-data">Please select a query range</div>
 
-            // 给当前点击的按钮添加 active 类
-            document.getElementById(`btn${period}`).classList.add('active');
+    <!-- Betting Records Table -->
+    <table id="record-table" style="display: none;">
+      <thead>
+        <tr>
+          <th>Bet Information</th>
+          <th>Bet  Amount</th>
+          <th>Roll  Result</th>
+          <th>Payout Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamic record data will go here -->
+      </tbody>
+    </table>
+  </div>
 
-            // 在这里添加日期过滤的逻辑
-            const table = document.getElementById('recordTable');
-            const rows = table.querySelectorAll('tr');
-            const now = new Date();
-            rows.forEach(row => {
-                const timeCell = row.children[0];
-                const recordTimeStr = timeCell.querySelector('span:first-child').textContent;
-                const recordTime = new Date(recordTimeStr.substring(0, 4), recordTimeStr.substring(4, 6) - 1, recordTimeStr.substring(6, 8),
-                                           recordTimeStr.substring(8, 10), recordTimeStr.substring(10, 12));
-                let isVisible = false;
+  <!-- Modal for Replay -->
+  <div id="replay-modal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
 
-                // 根据选择的日期范围过滤记录
-                if (period === '1d') {
-                    isVisible = now - recordTime <= 24 * 60 * 60 * 1000;
-                } else if (period === '1w') {
-                    isVisible = now - recordTime <= 7 * 24 * 60 * 60 * 1000;
-                } else if (period === '1m') {
-                    isVisible = now - recordTime <= 30 * 24 * 60 * 60 * 1000;
-                }
+  <script>
+    // Sample Betting Records
+    const records = [
+      {
+        betTime: '20250127143045',
+        settleTime: '20250127144500',
+        gameId: 'CR123456',
+        betAmount: '500',
+        betDetails: [
+          'Pass Line - 50',
+          'Place (4, 5, 6, 8, 9, 10)-100',
+          'Field - 100',
+          'Hardways (2, 2) - 100',
+          'Any Craps -50'
+        ],
+        result: '9 (4, 5)',
+        payout: '100'
+      },
+      {
+        betTime: '20250127154512',
+        settleTime: '20250127160000',
+        gameId: 'CR123457',
+        betAmount: '360',
+        betDetails: [
+          'Pass Line - 30',
+          'Place (4, 5, 6, 8, 9, 10) - 50',
+          'Field - 80',
+          'Hardways (2, 2) - 60',
+          'Any Craps - 40'
+        ],
+        result: '7 (1, 6)',
+        payout: '0'
+      },
+      {
+        betTime: '20250127143045',
+        settleTime: '20250127144500',
+        gameId: 'CR123456',
+        betAmount: '500',
+        betDetails: [
+          'Pass Line - 50',
+          'Place (4, 5, 6, 8, 9, 10)-100',
+          'Field - 100',
+          'Hardways (2, 2) - 100',
+          'Any Craps -50'
+        ],
+        result: '9 (4, 5)',
+        payout: '100'
+      },
+      {
+        betTime: '20250127154512',
+        settleTime: '20250127160000',
+        gameId: 'CR123457',
+        betAmount: '360',
+        betDetails: [
+          'Pass Line - 30',
+          'Place (4, 5, 6, 8, 9, 10) - 50',
+          'Field - 80',
+          'Hardways (2, 2) - 60',
+          'Any Craps - 40'
+        ],
+        result: '7 (1, 6)',
+        payout: '0'
+      }
+    ];
 
-                row.style.display = isVisible ? '' : 'none';
-            });
-        }
+    // Display Records
+    function displayRecords(filteredRecords) {
+      const tableBody = document.getElementById('record-table').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = ''; // Clear table
+      filteredRecords.forEach((record, index) => {
+        // Make result red and bold if it's a number
+        const resultStyle = /^[0-9]+$/.test(record.result) ? 'style="color: red; font-weight: bold;"' : '';
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="bet-info">
+            <p><strong>Bet Time:</strong> ${record.betTime}</p>
+            <p><strong>Settled Time:</strong> ${record.settleTime}</p>
+            <p><strong>Game ID:</strong> ${record.gameId}</p>
+          </td>
+          <td>
+            ${record.betAmount}
+            <button class="toggle-btn" onclick="toggleDetails(${index})">Details</button>
+          </td>
+          <td ${resultStyle}>
+            ${record.result}
+            <button class="replay-btn" onclick="openModal()">Replay</button>
+          </td>
+          <td>${record.payout}</td>
+        `;
+        tableBody.appendChild(row);
 
-        // 初始化默认选中状态
-        window.onload = function() {
-            filterData('1d');
-        };
-    </script>
+        // Hidden details row
+        const detailsRow = document.createElement('tr');
+        detailsRow.classList.add('details-row', 'hidden');
+        detailsRow.id = `details-${index}`;
+        detailsRow.innerHTML = `
+          <td colspan="4">
+            ${record.betDetails.map(detail => `<p>${detail}</p>`).join('')}
+          </td>
+        `;
+        tableBody.appendChild(detailsRow);
+      });
+    }
+
+    // Toggle Details
+    function toggleDetails(index) {
+      const detailsRow = document.getElementById(`details-${index}`);
+      detailsRow.classList.toggle('hidden');
+    }
+
+    // Open Modal
+    function openModal() {
+      document.getElementById('replay-modal').style.display = 'flex';
+    }
+
+    // Close Modal
+    function closeModal() {
+      document.getElementById('replay-modal').style.display = 'none';
+    }
+
+    // Filter Records
+    function filterRecords(filter) {
+      document.querySelectorAll('.query-section button').forEach(button => {
+        button.classList.remove('active');
+      });
+
+      if (filter === 'today') {
+        document.getElementById('btn-today').classList.add('active');
+      } else if (filter === 3) {
+        document.getElementById('btn-3-days').classList.add('active');
+      } else if (filter === 7) {
+        document.getElementById('btn-7-days').classList.add('active');
+      } else if (filter === 30) {
+        document.getElementById('btn-30-days').classList.add('active');
+      }
+
+      document.getElementById('no-data-message').style.display = 'none';
+      
+      // If 30 days is selected, show all records
+      const filteredRecords = filter === 'today' ? records.slice(0, 1) :
+                              filter === 3 ? records.slice(0, 2) :
+                              filter === 7 ? records.slice(0, 3) : records; // Show all records for 30Days
+    
+      document.getElementById('record-table').style.display = 'table';
+      displayRecords(filteredRecords);
+    }
+
+    // Default behavior on page load
+    window.onload = function() {
+      document.getElementById('record-table').style.display = 'none';
+      document.getElementById('no-data-message').style.display = 'block';
+    };
+  </script>
 </body>
 </html>
