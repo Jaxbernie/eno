@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accordion Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 100%;
+      width: 100%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    .accordion-item {
+      border-bottom: 1px solid #ddd;
+    }
+    .accordion-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    .accordion-title:hover {
+      background-color: #f1f1f1;
+    }
+    .accordion-content {
+      display: none;
+      padding: 15px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .accordion-content.active {
+      display: block;
+    }
+    .toggle-button {
+      font-size: 14px;
+      color: #007bff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    .toggle-button:focus {
+      outline: none;
+    }
+    .toggle-button:hover {
+      text-decoration: underline;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .accordion-title {
+        font-size: 14px;
+        padding: 12px;
+      }
+      .toggle-button {
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Rule Section -->
+    <div class="accordion-item">
+      <div class="accordion-title">
+        <span>Game Objective</span>
+        <button class="toggle-button" onclick="toggleContent(0)">Expand</button>
+      </div>
+      <div class="accordion-content">
+        <p>
+            Craps is an entertaining and exciting game of chance played with two
+            regular dice with face values from 1 to 6.The objective of the game is to
+            predict the outcome of the two dice total, based on your selected bets.
+        </p>
+             
+      </div>
+    </div>
+    <!-- Gameplay Section -->
+    <div class="accordion-item">
+      <div class="accordion-title">
+        <span>Game Objective</span>
+        <button class="toggle-button" onclick="toggleContent(1)">Expand</button>
+      </div>
+      <div class="accordion-content">
+        <p><p>
+            There is a wide selection of bets on the Craps table, each type having its own payout and conditions for winning, and with each type of bet requiring different dice totals to be rolled. Some bets are resolved in one roll while others may take several rolls until they are resolved.
+            <br>
+            The game occurs in two phases: the Come Out roll phase and the Point roll phase. It is possible to place bets during both phases of the game. For each roll, the two dice are thrown by the dice launcher into the wall at the other side of the table. The result is displayed when the two dice have come to a rest on the table.
+            <br>
+            The puck in the user interface will show if the next roll is a Come Out roll (the puck says “OFF”) or a Point roll (the puck says “ON”). This is useful to know since you can place different bets depending on in which phase you are playing.
+        </p>
+        <img src="offoron.jpeg" alt="Game Rules Image">
+        <p>
+            The game flow begins with a Come Out roll ("OFF") for the fundamental
+
+Pass Line or Don't Pass bets.If the sum of the two dice is 7 or 11 you
+
+win on your Pass Line bet.If the sum of the dice is 2 or 3 you win on the
+
+Don't Pass bet, and you push on the Don't Pass bet if the sum is 12.Your
+
+bets then are returned and the game ends.Either way the bet is resolved
+
+and a new Come Out roll will start.<br>
+
+If any other total is rolled 4,5,6,8,9 or 10 that total is called the Point
+
+The puck is now changed to "ON" and placed next to the rolled total on
+
+the betting grid or highlight.The game will remain in the Point roll phase
+
+until a total of 7 is rolled,or the same point number is rolled once again.<br>
+
+Unlike any other bets that can be placed at any roll phase,bets on the
+
+Pass Line or Don't Pass are available only during the Come Out roll phase
+
+puck will show "OFF").If you joined the game during the Point roll phase,
+
+you can participate in the roll by placing bets on Come or Don't Come.
+
+These bets are much like the Pass Line and Don't Pass bets, except that
+
+you will get a new rolled point number marked by your chips.<br>
+
+Regardless of the game phase, you can always place bets before the
+
+next roll of the dice during the betting time.<br>
+
+To play,select which bets you would like to make and place your chips on
+
+the betting table accordingly
+<img src="betplace.jpeg" alt="Game Rules Image">
+            
+            </p>
+      </div>
+    </div>
+    <!-- Payout Section -->
+    <div class="accordion-item">
+      <div class="accordion-title">
+        <span>Next XXX </span>
+        <button class="toggle-button" onclick="toggleContent(2)">Expand</button>
+      </div>
+      <div class="accordion-content">
+        <p>
+            1.其他内容，单独提供文本文件，方式也是标题扼要+展开详述；<br>
+            2.游戏目标和游戏规则，作为参考例子
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle function to show/hide content
+    function toggleContent(index) {
+      const contents = document.querySelectorAll('.accordion-content');
+      const buttons = document.querySelectorAll('.toggle-button');
+
+      // Toggle the selected content
+      if (contents[index].classList.contains('active')) {
+        contents[index].classList.remove('active');
+        buttons[index].textContent = 'Expand';
+      } else {
+        contents[index].classList.add('active');
+        buttons[index].textContent = 'Collapse';
+      }
+    }
+  </script>
+</body>
+</html>
