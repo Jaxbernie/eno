@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单次倒计时按钮</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+        .countdown-btn {
+            position: relative;
+            width: 200px;
+            height: 50px;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: gray; /* 默认背景色为灰色 */
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: green; /* 初始绿色 */
+            transition: width 1s linear;
+        }
+        .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="countdownButton" class="countdown-btn">
+        <span class="btn-text">我要战斗</span>
+        <div class="progress-bar" id="progressBar" style="width: 100%;"></div>
+    </button>
+
+    <script>
+        function startCountdown() {
+            let button = document.getElementById("countdownButton");
+            let progressBar = document.getElementById("progressBar");
+            let buttonText = button.querySelector(".btn-text");
+
+            let timeLeft = 5; 
+            let maxTime = 5; 
+
+            // 让按钮从开始是绿色，随着倒计时逐渐变成灰色
+            let countdown = setInterval(() => {
+                timeLeft--;
+
+                // 更新进度条宽度
+                progressBar.style.width = (timeLeft / maxTime) * 100 + "%";
+                buttonText.innerText = `我要战斗 ${timeLeft}s`;
+
+                // 当倒计时结束，设置按钮背景为灰色
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    buttonText.innerText = "您已放弃战斗";
+                    progressBar.style.width = "0%"; // 完全消失
+
+                    // 倒计时结束后，按钮保持灰色，不再重新开始
+                    button.style.backgroundColor = "#888"; // 设置为灰色
+                }
+            }, 1000);
+        }
+
+        window.onload = startCountdown; // 页面加载后自动启动倒计时
+    </script>
+
+</body>
+</html>
