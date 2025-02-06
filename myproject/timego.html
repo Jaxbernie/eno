@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>单次倒计时按钮</title>
+    <title>循环倒计时按钮</title>
     <style>
         body {
             text-align: center;
@@ -50,27 +50,39 @@
             let progressBar = document.getElementById("progressBar");
             let buttonText = button.querySelector(".btn-text");
 
-            let timeLeft = 5; 
-            let maxTime = 5; 
+            let timeLeft = 6; // 每次倒计时 5 秒
+            let maxTime = 6; 
 
-            // 让按钮从开始是绿色，随着倒计时逐渐变成灰色
-            let countdown = setInterval(() => {
-                timeLeft--;
+            // 倒计时函数
+            function countdown() {
+                let interval = setInterval(() => {
+                    timeLeft--;
 
-                // 更新进度条宽度
-                progressBar.style.width = (timeLeft / maxTime) * 100 + "%";
-                buttonText.innerText = `我要战斗 ${timeLeft}s`;
+                    // 更新进度条宽度
+                    progressBar.style.width = (timeLeft / maxTime) * 100 + "%";
+                    buttonText.innerText = `我要战斗 ${timeLeft}s`;
 
-                // 当倒计时结束，设置按钮背景为灰色
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    buttonText.innerText = "您已放弃战斗";
-                    progressBar.style.width = "0%"; // 完全消失
+                    // 当倒计时结束，设置按钮背景为灰色
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        buttonText.innerText = "您已放弃战斗";
+                        progressBar.style.width = "0%"; // 完全消失
 
-                    // 倒计时结束后，按钮保持灰色，不再重新开始
-                    button.style.backgroundColor = "#888"; // 设置为灰色
-                }
-            }, 1000);
+                        // 倒计时结束后，按钮保持灰色
+                        button.style.backgroundColor = "#888"; // 设置为灰色
+
+                        // 等待 2 秒后重启倒计时
+                        setTimeout(() => {
+                            button.style.backgroundColor = "gray"; // 恢复按钮背景
+                            progressBar.style.width = "100%"; // 恢复进度条
+                            timeLeft = 6; // 重置倒计时
+                            countdown(); // 重新启动倒计时
+                        }, 5000); // 2秒后启动新的倒计时
+                    }
+                }, 1000); // 每秒更新一次
+            }
+
+            countdown(); // 启动初始倒计时
         }
 
         window.onload = startCountdown; // 页面加载后自动启动倒计时
