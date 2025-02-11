@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌动画</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            width: 390px;
+            height: 800px;
+        }
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('bg1.png') no-repeat center center/cover;
+            transition: opacity 1s ease-in-out;
+        }
+        .background.hidden {
+            opacity: 0;
+        }
+        .card {
+            width: 220px;
+            height: 320px;
+            background: url('back.png') no-repeat center center/cover;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transform-origin: center;
+            transition: transform 1.5s ease-in-out;
+        }
+        .card.flipped {
+            background: url('front.png') no-repeat center center/cover;
+            transform: translate(-50%, -50%) rotateY(180deg);
+        }
+        .card.shrunk {
+            width: 65px;
+            height: 85px;
+            transform: translate(-130px, -40px);
+            background: url('front.png') no-repeat center center/cover;
+        }
+        .small-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('bg2.png') no-repeat center center/cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background" id="bg1"></div>
+        <div class="small-bg" id="bg2"></div>
+        <div class="card" id="card"></div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('card').classList.add('flipped');
+        }, 1500);
+
+        setTimeout(() => {
+            document.getElementById('bg1').classList.add('hidden');
+            document.getElementById('bg2').style.opacity = '1';
+            document.getElementById('card').classList.add('shrunk');
+        }, 3000);
+    </script>
+</body>
+</html>
