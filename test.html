@@ -22,17 +22,18 @@
     .drawer {
       position: fixed;
       top: 0;
-      right: -400px;
+      right: 0;
       width: 400px;
       height: 100%;
       background-color: #f9f9f9;
       box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
       padding: 20px;
-      transition: right 0.3s ease-in-out;
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
       z-index: 1000;
     }
     .drawer.open {
-      right: 0;
+      transform: translateX(0);
     }
     .drawer-close {
       float: right;
@@ -54,7 +55,6 @@
 <div class="container">
   <h2>查询结果</h2>
   <div id="data-list">
-    <!-- 数据行 -->
     <div class="row">
       <div>数据项 1</div>
       <button class="detail-button" onclick="openDrawer('详情内容 1')">详情</button>
@@ -75,6 +75,7 @@
       <div>数据项 5</div>
       <button class="detail-button" onclick="openDrawer('详情内容 5')">详情</button>
     </div>
+    <H2>说明：数据结果展示后，点击【详情】按钮，查看交互效果</H2>
   </div>
 </div>
 
