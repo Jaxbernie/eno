@@ -18,6 +18,10 @@
       align-items: center;
       border-bottom: 1px solid #ddd;
       padding: 10px 0;
+      transition: background-color 0.2s;
+    }
+    .row.active-row {
+      background-color: #e6f7ff;
     }
     .drawer {
       position: fixed;
@@ -47,35 +51,39 @@
       border: none;
       cursor: pointer;
       border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    .detail-button.viewed {
+      background-color: #ccc;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>查询结果</h2>
+  <h2>用户中心-KYC提案-查询结果页</h2>
   <div id="data-list">
     <div class="row">
       <div>数据项 1</div>
-      <button class="detail-button" onclick="openDrawer('详情内容 1')">详情</button>
+      <button class="detail-button" onclick="openDrawer('详情内容 1', this)">详情</button>
     </div>
     <div class="row">
       <div>数据项 2</div>
-      <button class="detail-button" onclick="openDrawer('详情内容 2')">详情</button>
+      <button class="detail-button" onclick="openDrawer('详情内容 2', this)">详情</button>
     </div>
     <div class="row">
       <div>数据项 3</div>
-      <button class="detail-button" onclick="openDrawer('详情内容 3')">详情</button>
+      <button class="detail-button" onclick="openDrawer('详情内容 3', this)">详情</button>
     </div>
     <div class="row">
       <div>数据项 4</div>
-      <button class="detail-button" onclick="openDrawer('详情内容 4')">详情</button>
+      <button class="detail-button" onclick="openDrawer('详情内容 4', this)">详情</button>
     </div>
     <div class="row">
       <div>数据项 5</div>
-      <button class="detail-button" onclick="openDrawer('详情内容 5')">详情</button>
+      <button class="detail-button" onclick="openDrawer('详情内容 5', this)">详情</button>
     </div>
-    <H2>说明：数据结果展示后，点击【详情】按钮，查看交互效果</H2>
+    <H3>说明：数据结果展示后，点击【详情】按钮，查看交互效果</H3>
   </div>
 </div>
 
@@ -89,13 +97,27 @@
 </div>
 
 <script>
-  function openDrawer(content) {
+  function openDrawer(content, el) {
+    // 设置详情内容
     document.getElementById("drawer-content").innerText = content;
     document.getElementById("drawer").classList.add("open");
+
+    // 高亮当前行
+    const rows = document.querySelectorAll(".row");
+    rows.forEach(row => row.classList.remove("active-row"));
+    const currentRow = el.closest(".row");
+    if (currentRow) {
+      currentRow.classList.add("active-row");
+    }
+
+    // 设置按钮为已查看状态
+    el.classList.add("viewed");
   }
 
   function closeDrawer() {
     document.getElementById("drawer").classList.remove("open");
+    // 如果希望关闭时取消高亮，可启用下行代码：
+    // document.querySelectorAll(".row").forEach(row => row.classList.remove("active-row"));
   }
 </script>
 
