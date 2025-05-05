@@ -21,7 +21,7 @@
       transition: background-color 0.2s;
     }
     .row.active-row {
-      background-color: #e6f7ff;
+      background-color: #e6f7ff; /* 当前高亮 */
     }
     .drawer {
       position: fixed;
@@ -46,7 +46,7 @@
     }
     .detail-button {
       padding: 5px 10px;
-      background-color: #007bff;
+      background-color: #0056b3; /* 深蓝未读 */
       color: #fff;
       border: none;
       cursor: pointer;
@@ -54,14 +54,15 @@
       transition: background-color 0.2s;
     }
     .detail-button.viewed {
-      background-color: #ccc;
+      background-color: #91d5ff; /* 浅蓝已读 */
+      color: #000;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>用户中心-KYC提案-查询结果页</h2>
+  <h2>查询结果</h2>
   <div id="data-list">
     <div class="row">
       <div>数据项 1</div>
@@ -110,14 +111,12 @@
       currentRow.classList.add("active-row");
     }
 
-    // 设置按钮为已查看状态
+    // 设置按钮为“已查看”
     el.classList.add("viewed");
   }
 
   function closeDrawer() {
     document.getElementById("drawer").classList.remove("open");
-    // 如果希望关闭时取消高亮，可启用下行代码：
-    // document.querySelectorAll(".row").forEach(row => row.classList.remove("active-row"));
   }
 </script>
 
