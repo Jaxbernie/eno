@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>代理合作计划</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+    header {
+      background-color: #111;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 { margin-bottom: 10px; }
+
+    .tabs {
+      display: flex;
+      background: #ddd;
+      border-radius: 8px 8px 0 0;
+      overflow-x: auto;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: bold;
+      min-width: 150px;
+    }
+
+    .tab.active {
+      background: #fff;
+      border-bottom: 3px solid #ff6600;
+    }
+
+    .tab-content {
+      background: #fff;
+      padding: 30px;
+      border: 1px solid #ddd;
+      border-top: none;
+      min-height: 300px;
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #ff6600;
+      color: #fff;
+      border: none;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    footer {
+      background-color: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    /* 在线客服按钮 */
+    .chat-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #ff6600;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 999;
+    }
+
+    .chat-box {
+      position: fixed;
+      bottom: 80px;
+      right: 30px;
+      width: 280px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+    }
+
+    .chat-box textarea {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+    }
+
+    .chat-box button {
+      margin-top: 10px;
+      width: 100%;
+      background: #ff6600;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.login-btn a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 16px;
+  background-color: #ff6600;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.login-btn a:hover {
+  background-color: #e65c00;
+}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>GP代理合营计划</h1>
+  <div class="login-btn">
+  <a href="https://mkt-frontend-gp.uatext66mkt.com/dashboard" target="_blank">代理登录</a>
+</div>
+  <p>推广即赚钱，高分成，高回报</p>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" data-tab="tab1">GP代理合营</div>
+    <div class="tab" data-tab="tab2">为何选择GP代理</div>
+      <div class="tab" data-tab="tab4">限时活动</div>
+    <div class="tab" data-tab="tab3">联系我们</div>
+  
+  </div>
+
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <h2>什么是代理？</h2>
+      <p>代理是我们的合作伙伴，您通过推广我们的游戏平台，吸引用户注册并投注，就可以获得持续的佣金收益。</p>
+      <ul>
+        <li>📈 每月最高可达 50% 的分成比例</li>
+        <li>👥 可发展下线代理，享受团队提成</li>
+        <li>💼 提供推广工具与数据后台，轻松管理</li>
+        <li>💰 持续被动收益，真正实现躺赚</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane" id="tab2">
+      <h2>选择GP代理的理由</h2>
+      <p>您只需简单注册，即可成为基础代理。通过推广和邀请下线，可逐步升级为更高级别的合作伙伴，享受更高佣金：</p>
+      <ol>
+        <li>🔹 <strong>注册成为基础代理</strong> - 获取专属推广链接</li>
+        <li>🔹 <strong>邀请用户</strong> 注册并消费，您即可获得佣金</li>
+        <li>🔹 <strong>邀请其他代理</strong> 加入您的团队，享受下线代理收益分成</li>
+        <li>🔹 <strong>达到业绩门槛</strong>，自动升级为高级代理，佣金比例更高</li>
+      </ol>
+      <a href="#tab3" class="btn">我要成为代理</a>
+    </div>
+
+    <div class="tab-pane" id="tab3">
+      <h2>联系我们</h2>
+      <p>留下您的联系方式，我们的招商经理将尽快与您联系，开启您的财富之路！</p>
+      <form onsubmit="event.preventDefault(); alert('提交成功，我们会尽快联系您！');">
+        <label>您的姓名</label>
+        <input type="text" placeholder="请输入您的姓名" required />
+        <label>联系电话</label>
+        <input type="tel" placeholder="请输入手机或微信号" required />
+        <label>备注信息</label>
+        <textarea rows="4" placeholder="可填写您有意推广的渠道或其他信息"></textarea>
+        <button type="submit" class="btn">提交合作申请</button>
+      </form>
+    </div>
+
+    <div class="tab-pane" id="tab4">
+      <h2>代理扶持计划（限时活动）</h2>
+      <p>为助力代理快速成长，我们特别推出限时放利活动：</p>
+      <ul>
+        <li>🎁 <strong>注册即送 100 元推广红包</strong></li>
+        <li>🔥 <strong>每邀请 5 名有效用户，额外加送 ¥500</strong></li>
+        <li>🚀 <strong>月推广业绩破万元，再加 10% 奖励</strong></li>
+        <li>📣 活动时间：<mark>每月1号至15号</mark>，请密切关注</li>
+        <li>🤝 扶持政策长期滚动更新，关注后台通知</li>
+      </ul>
+      <p>现在就行动起来，抢占红利先机！</p>
+      <a href="#tab3" class="btn">立即申请代理</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 游戏代理合作平台 · 保留所有权利</p>
+</footer>
+
+<!-- 在线客服按钮与弹窗 -->
+<div class="chat-btn" onclick="toggleChat()">💬 在线客服</div>
+<div class="chat-box" id="chatBox">
+  <strong>客服小助手</strong>
+  <p>您好，有任何问题欢迎咨询~</p>
+  <textarea placeholder="请输入您的问题..."></textarea>
+  <button onclick="alert('消息已发送，我们会尽快回复');">发送</button>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panes = document.querySelectorAll('.tab-pane');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      panes.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // 支持锚点跳转
+  document.querySelectorAll('a[href^="#tab"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').substring(1);
+      document.querySelector(`.tab[data-tab="${id}"]`).click();
+    });
+  });
+
+  // 在线客服弹窗
+  function toggleChat() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.style.display = (chatBox.style.display === 'block') ? 'none' : 'block';
+  }
+</script>
+
+</body>
+</html>
