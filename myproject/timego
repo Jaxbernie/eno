@@ -1,80 +1,176 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>单次倒计时按钮</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            margin-top: 50px;
-        }
-        .countdown-btn {
-            position: relative;
-            width: 200px;
-            height: 50px;
-            border: none;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background-color: gray; /* 默认背景色为灰色 */
-            cursor: pointer;
-            overflow: hidden;
-            border-radius: 5px;
-        }
-        .progress-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background-color: green; /* 初始绿色 */
-            transition: width 1s linear;
-        }
-        .btn-text {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>拖动 & 缩放 & 自适应字体弹框</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #openBtn {
+      margin: 20px;
+      padding: 10px 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      left: 100px;
+      top: 100px;
+      width: 300px;
+      height: 200px;
+      background: #fff;
+      border: 2px solid #444;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      overflow: auto;
+    }
+
+    .modal-header {
+      background: #555;
+      color: white;
+      padding: 10px;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-content {
+      padding: 10px;
+      transition: font-size 0.2s ease;
+    }
+
+    .resizer {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #666;
+      z-index: 2;
+    }
+
+    .resizer.br { right: 0; bottom: 0; cursor: se-resize; }
+    .resizer.bl { left: 0; bottom: 0; cursor: sw-resize; }
+    .resizer.tr { right: 0; top: 0; cursor: ne-resize; }
+    .resizer.tl { left: 0; top: 0; cursor: nw-resize; }
+  </style>
 </head>
 <body>
 
-    <button id="countdownButton" class="countdown-btn">
-        <span class="btn-text">我要战斗</span>
-        <div class="progress-bar" id="progressBar" style="width: 100%;"></div>
-    </button>
+<button id="openBtn">弹框交互效果演示</button>
 
-    <script>
-        function startCountdown() {
-            let button = document.getElementById("countdownButton");
-            let progressBar = document.getElementById("progressBar");
-            let buttonText = button.querySelector(".btn-text");
+<div id="modal" class="modal">
+  <div class="modal-header">
+    <span>按住标题栏拖动位置</span>
+    <button class="close-btn" id="closeBtn">&times;</button>
+  </div>
+  <div class="modal-content" id="modalContent">
+    弹框内容：支持自由拖拽和缩放、内容显示需要会自动适应弹窗。
+  </div>
+  <div class="resizer br"></div>
+  <div class="resizer bl"></div>
+  <div class="resizer tr"></div>
+  <div class="resizer tl"></div>
+</div>
 
-            let timeLeft = 5; 
-            let maxTime = 5; 
+<script>
+  const modal = document.getElementById("modal");
+  const header = modal.querySelector(".modal-header");
+  const openBtn = document.getElementById("openBtn");
+  const closeBtn = document.getElementById("closeBtn");
+  const modalContent = document.getElementById("modalContent");
 
-            // 让按钮从开始是绿色，随着倒计时逐渐变成灰色
-            let countdown = setInterval(() => {
-                timeLeft--;
+  openBtn.onclick = () => {
+    modal.style.display = "block";
+  };
 
-                // 更新进度条宽度
-                progressBar.style.width = (timeLeft / maxTime) * 100 + "%";
-                buttonText.innerText = `我要战斗 ${timeLeft}s`;
+  closeBtn.onclick = () => {
+    modal.style.display = "none";
+  };
 
-                // 当倒计时结束，设置按钮背景为灰色
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    buttonText.innerText = "您已放弃战斗";
-                    progressBar.style.width = "0%"; // 完全消失
+  // 拖动弹窗
+  header.onmousedown = function(e) {
+    if (e.target.classList.contains('close-btn')) return;
 
-                    // 倒计时结束后，按钮保持灰色，不再重新开始
-                    button.style.backgroundColor = "#888"; // 设置为灰色
-                }
-            }, 1000);
+    let offsetX = e.clientX - modal.offsetLeft;
+    let offsetY = e.clientY - modal.offsetTop;
+
+    function onMouseMove(e) {
+      modal.style.left = e.clientX - offsetX + 'px';
+      modal.style.top = e.clientY - offsetY + 'px';
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.onmouseup = function() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.onmouseup = null;
+    };
+  };
+
+  // 缩放功能
+  const resizers = modal.querySelectorAll('.resizer');
+  resizers.forEach(resizer => {
+    resizer.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startWidth = parseInt(getComputedStyle(modal).width);
+      const startHeight = parseInt(getComputedStyle(modal).height);
+      const startLeft = modal.offsetLeft;
+      const startTop = modal.offsetTop;
+
+      function onMouseMove(e) {
+        if (resizer.classList.contains('br')) {
+          modal.style.width = startWidth + (e.clientX - startX) + 'px';
+          modal.style.height = startHeight + (e.clientY - startY) + 'px';
+        } else if (resizer.classList.contains('bl')) {
+          modal.style.width = startWidth - (e.clientX - startX) + 'px';
+          modal.style.left = startLeft + (e.clientX - startX) + 'px';
+          modal.style.height = startHeight + (e.clientY - startY) + 'px';
+        } else if (resizer.classList.contains('tr')) {
+          modal.style.width = startWidth + (e.clientX - startX) + 'px';
+          modal.style.height = startHeight - (e.clientY - startY) + 'px';
+          modal.style.top = startTop + (e.clientY - startY) + 'px';
+        } else if (resizer.classList.contains('tl')) {
+          modal.style.width = startWidth - (e.clientX - startX) + 'px';
+          modal.style.left = startLeft + (e.clientX - startX) + 'px';
+          modal.style.height = startHeight - (e.clientY - startY) + 'px';
+          modal.style.top = startTop + (e.clientY - startY) + 'px';
         }
+        adjustFontSize();
+      }
 
-        window.onload = startCountdown; // 页面加载后自动启动倒计时
-    </script>
+      function onMouseUp() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+  });
+
+  // 自适应字体大小
+  function adjustFontSize() {
+    const width = modal.clientWidth;
+    const height = modal.clientHeight;
+    const minSize = Math.min(width, height);
+    const fontSize = Math.max(12, Math.min(22, minSize / 15)); // 控制字体大小范围
+    modalContent.style.fontSize = fontSize + 'px';
+  }
+
+  // 初始化观察器
+  const observer = new ResizeObserver(adjustFontSize);
+  observer.observe(modal);
+</script>
 
 </body>
 </html>
