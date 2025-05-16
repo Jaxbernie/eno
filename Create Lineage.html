@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Lineage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #fff;
+    }
+    .form-container {
+      max-width: 900px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    .buttons button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .save-btn {
+      background-color: #1890ff;
+      color: white;
+    }
+    .cancel-btn {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Create Lineage</h2>
+    <form>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="business">* Business Name:</label>
+          <select id="business" required>
+            <option>Select</option>
+            <option>Business A</option>
+            <option>Business B</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="product">* Product Name:</label>
+          <select id="product" required>
+            <option>Select</option>
+            <option>Product A</option>
+            <option>Product B</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="productId">* Product ID:</label>
+          <select id="productId" required>
+            <option>Select</option>
+            <option>ID001</option>
+            <option>ID002</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="client">* Clients Name:</label>
+          <select id="client" required>
+            <option>Select</option>
+            <option>Client A</option>
+            <option>Client B</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="lineage">* Lineage Name:</label>
+          <input type="text" id="lineage" placeholder="Please Input" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label for="remark">Remark:</label>
+          <textarea id="remark" placeholder="Optional">test suspend</textarea>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="submit" class="save-btn">Save</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
