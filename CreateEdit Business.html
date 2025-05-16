@@ -30,7 +30,7 @@
       font-weight: bold;
       margin-bottom: 5px;
     }
-    input, select, textarea {
+    input, textarea {
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -59,7 +59,7 @@
       background-color: #f0f0f0;
     }
 
-    /* Toast 样式（顶部居中） */
+    /* Toast 样式 */
     .toast {
       visibility: hidden;
       min-width: 200px;
@@ -98,16 +98,12 @@
   <div id="toast" class="toast">Created successfully</div>
 
   <div class="form-container">
-    <h2>Create/Edit Business</h2>
+    <h2>Create Business</h2>
     <form id="businessForm">
       <div class="form-row">
         <div class="form-group">
           <label for="businessName">* Business Name:</label>
           <input type="text" id="businessName" value="Brazil" required readonly />
-        </div>
-        <div class="form-group">
-          <label for="businessAlias">* Business Alias:</label>
-          <input type="text" id="businessAlias" value="BR" required />
         </div>
       </div>
 
@@ -134,7 +130,7 @@
       toast.className = "toast show";
       setTimeout(() => {
         toast.className = toast.className.replace("show", "");
-      }, 1500); // 1.5 秒后隐藏
+      }, 2000); // 3 秒后隐藏
     });
   </script>
 </body>
