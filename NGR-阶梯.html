@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commission Plan</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; margin: 0; }
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: #fff;
+      height: 100vh;
+      padding-top: 20px;
+    }
+    .sidebar h3, .sidebar ul { padding-left: 20px; }
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar li { padding: 8px 20px; cursor: pointer; }
+    .sidebar li:hover { background: #34495e; }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: #f4f6f9;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 15px;
+      border: none;
+      background: #ccc;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    .tab-button.active {
+      background: #3498db;
+      color: white;
+    }
+    .tab-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .form-row {
+      margin-bottom: 12px;
+    }
+    .form-row label {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .form-row input, .form-row select {
+      padding: 6px;
+      width: 250px;
+    }
+    .tier-box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background: #fdfdfd;
+    }
+    .tier-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .remove-btn {
+      color: red;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    .buttons button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h3>Commission Plan</h3>
+  <ul>
+    <li>Regular Plan</li>
+    <li>Promotional Plan</li>
+  </ul>
+</div>
+
+<div class="content">
+  <div class="tabs">
+    <button class="tab-button" onclick="switchTab('turnover')">Turnover</button>
+    <button class="tab-button" onclick="switchTab('ggr')">GGR</button>
+    <button class="tab-button active" onclick="switchTab('ngr')">NGR</button>
+  </div>
+
+  <div class="tab-content" id="tab-turnover" style="display: none;">
+    <p>保持不变</p>
+  </div>
+
+  <div class="tab-content" id="tab-ggr" style="display: none;">
+    <p>保持不变</p>
+  </div>
+
+  <div class="tab-content" id="tab-ngr">
+    <div class="form-row">
+      <label><strong>Commission Plan Name:</strong></label>
+      <input type="text" placeholder="Enter plan name" />
+    </div>
+
+    <div class="form-row">
+      <label><strong>Settlement Cycle:</strong></label>
+      <select>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label><strong>Minimum First Deposit (PHP) to Activate:</strong></label>
+      <input type="number" placeholder="e.g. 100" />
+    </div>
+
+    <div class="form-row">
+      <label><strong>eKYC Completion Status:</strong></label>
+      <select>
+        <option value="all">All</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+
+    <h4>Tiered Commission Settings (By NGR)</h4>
+    <div id="tiers-container">
+      <!-- Tiers go here -->
+    </div>
+    <button onclick="addTier()">+ Add Tier</button>
+
+    <div class="buttons">
+      <button onclick="alert('Submitted!')">Submit</button>
+      <button onclick="location.reload()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentTab = 'ngr';
+  let tierIndex = 1;
+
+  function switchTab(tab) {
+    document.getElementById('tab-turnover').style.display = 'none';
+    document.getElementById('tab-ggr').style.display = 'none';
+    document.getElementById('tab-ngr').style.display = 'none';
+
+    document.getElementById('tab-' + tab).style.display = 'block';
+
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function addTier() {
+    const container = document.getElementById('tiers-container');
+    const tier = document.createElement('div');
+    tier.className = 'tier-box';
+
+    tier.innerHTML = `
+      <div class="tier-header">Tier ${tierIndex} 
+        ${tierIndex === 1 ? '(Default Tier)' : '(When NGR ≥ <input type="number" name="ngr_min_${tierIndex}" style="width: 80px;" />)'}
+        ${tierIndex > 1 ? '<span class="remove-btn" onclick="this.parentElement.parentElement.remove()">Remove</span>' : ''}
+      </div>
+
+      <div class="form-row">
+        <strong>Level 1 Agent:</strong><br>
+        Direct Player = <input type="number" name="l1_direct_${tierIndex}" style="width: 60px;" /> %
+        Subordinate Player = <input type="number" name="l1_sub_${tierIndex}" style="width: 60px;" /> %
+        Third Level Player = <input type="number" name="l1_third_${tierIndex}" style="width: 60px;" /> %
+      </div>
+
+      <div class="form-row">
+        <strong>Level 2 Agent:</strong><br>
+        Direct Player = <input type="number" name="l2_direct_${tierIndex}" style="width: 60px;" /> %
+        Subordinate Player = <input type="number" name="l2_sub_${tierIndex}" style="width: 60px;" /> %
+      </div>
+
+      <div class="form-row">
+        <strong>Level 3 Agent:</strong><br>
+        Direct Player = <input type="number" name="l3_direct_${tierIndex}" style="width: 60px;" /> %
+      </div>
+    `;
+    container.appendChild(tier);
+    tierIndex++;
+  }
+
+  // 默认添加一个初始阶梯
+  addTier();
+</script>
+
+</body>
+</html>
