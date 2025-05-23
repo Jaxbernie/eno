@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commission Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      margin: 0;
+    }
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: #fff;
+      height: 100vh;
+      padding-top: 20px;
+    }
+    .sidebar h3, .sidebar ul {
+      padding-left: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      padding: 8px 20px;
+      cursor: pointer;
+    }
+    .sidebar li:hover {
+      background: #34495e;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: #f4f6f9;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    .tabs, .promo-tabs {
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 15px;
+      border: none;
+      background: #ccc;
+      margin-right: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .tab-button.active {
+      background: #3498db;
+      color: white;
+    }
+    .tab-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .form-group-title {
+      font-weight: bold;
+      margin: 20px 0 10px;
+      font-size: 16px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .form-row label {
+      width: 200px;
+      text-align: right;
+      margin-right: 12px;
+      font-size: 14px;
+    }
+    .form-row input[type="text"],
+    .form-row input[type="number"],
+    .form-row input[type="date"],
+    .form-row select {
+      padding: 6px 10px;
+      width: 250px;
+      font-size: 14px;
+    }
+    .buttons {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .buttons button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      font-size: 14px;
+    }
+    .buttons button:hover {
+      background-color: #2980b9;
+    }
+    .form-row.cascade select {
+      width: auto;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h3>Commission Plan</h3>
+  <ul>
+    <li onclick="showMainTab('regular')">Regular Plan</li>
+    <li onclick="showMainTab('promo')">Promotional Plan</li>
+  </ul>
+</div>
+
+<div class="content">
+  <div id="regularTab" class="tab-content" style="display: none;">
+    <p>Regular Plan Configuration</p>
+  </div>
+
+  <div id="promoTab" class="tab-content">
+    <div class="promo-tabs">
+      <button class="tab-button" onclick="switchPromoTab('invite', event)">New User Incentive</button>
+      <button class="tab-button active" onclick="switchPromoTab('game', event)">Limited-time Multiplier</button>
+      <button class="tab-button" onclick="switchPromoTab('challenge', event)">Quarterly Challenge</button>
+    </div>
+
+    <div class="tab-content" id="promo-game">
+      <div class="form-group-title">Basic Settings</div>
+      <div class="form-row">
+        <label>Promotion Plan Name:</label>
+        <input type="text" placeholder="e.g. Poker Double Week" />
+      </div>
+      <div class="form-row">
+        <label>Settlement Cycle:</label>
+        <select>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Valid Period:</label>
+        <input type="date" style="width: 120px;" />&nbsp;to&nbsp;
+        <input type="date" style="width: 120px;" />
+      </div>
+
+      <div class="form-group-title">Target Agents</div>
+      <div class="form-row">
+        <label>Apply To:</label>
+        <select>
+          <option value="all">All Agents</option>
+          <option value="custom">Specified Agents</option>
+          <option value="level">By Agent Level</option>
+        </select>
+      </div>
+
+      <div class="form-group-title">Multiplier Configuration</div>
+
+      <div class="form-row">
+        <label>Multiplier Active Period:</label>
+        <input type="date" style="width: 120px;" />&nbsp;to&nbsp;
+        <input type="date" style="width: 120px;" />
+      </div>
+
+      <div class="form-row">
+        <label>Multiplier Type:</label>
+        <label><input type="radio" name="multiplierType" value="game" checked onchange="onMultiplierTypeChange()" /> Game</label>
+        <label><input type="radio" name="multiplierType" value="firstDeposit" onchange="onMultiplierTypeChange()" /> First Deposit</label>
+      </div>
+
+      <div id="gameConfig">
+        <div class="form-row cascade">
+          <label>Game Category:</label>
+          <select>
+          <option>Video</option>
+          <option>Slot</option>
+          <option>TableGame</option>
+          </select>
+          <select><option>Baccarat</option>
+          <option>Tongits</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Reward Basis:</label>
+          <select>
+            <option value="turnover">Turnover</option>
+            <option value="ggr">GGR</option>
+            <option value="ngr">NGR</option>
+          </select>
+        </div>
+      </div>
+
+
+
+<div id="firstDepositConfig" style="display: none;">
+  <div class="form-row">
+    <label>Reward Basis:</label>
+    <select>
+      <option value="userCount">User Count</option>
+      <option value="amount">Amount</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>EKYC Status:</label>
+    <select>
+      <option value="all">All</option>
+      <option value="verified">Completed</option>
+    </select>
+  </div>
+</div>
+
+
+      <div class="form-row">
+        <label>Multiplier Factor:</label>
+        <input type="number" placeholder="e.g. 2" min="1" />
+      </div>
+
+      <div class="buttons">
+        <button onclick="alert('Game Promotion saved')">Save Settings</button>
+        <button onclick="location.reload()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="tab-content" id="promo-invite" style="display:none;"></div>
+    <div class="tab-content" id="promo-challenge" style="display:none;">
+      <p>Quarterly Challenge Content...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function showMainTab(tab) {
+  document.getElementById('regularTab').style.display = tab === 'regular' ? 'block' : 'none';
+  document.getElementById('promoTab').style.display = tab === 'promo' ? 'block' : 'none';
+}
+function switchPromoTab(tab, event) {
+  const tabs = ['invite', 'game', 'challenge'];
+  tabs.forEach(t => {
+    document.getElementById('promo-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  event.target.parentNode.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function onMultiplierTypeChange() {
+  const type = document.querySelector('input[name="multiplierType"]:checked').value;
+  document.getElementById('gameConfig').style.display = type === 'game' ? 'block' : 'none';
+  document.getElementById('firstDepositConfig').style.display = type === 'firstDeposit' ? 'block' : 'none';
+}
+window.onload = function() {
+  showMainTab('promo');
+  switchPromoTab('game', { target: document.querySelector('.tab-button.active') });
+  onMultiplierTypeChange();
+}
+</script>
+
+</body>
+</html>
