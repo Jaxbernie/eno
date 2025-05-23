@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commission Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      margin: 0;
+    }
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: #fff;
+      height: 100vh;
+      padding-top: 20px;
+    }
+    .sidebar h3, .sidebar ul {
+      padding-left: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      padding: 8px 20px;
+      cursor: pointer;
+    }
+    .sidebar li:hover {
+      background: #34495e;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: #f4f6f9;
+    }
+    .tabs, .promo-tabs {
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 15px;
+      border: none;
+      background: #ccc;
+      margin-right: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .tab-button.active {
+      background: #3498db;
+      color: white;
+    }
+    .tab-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .form-group-title {
+      font-weight: bold;
+      margin: 20px 0 10px;
+      font-size: 16px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .form-row label {
+      width: 200px;
+      text-align: right;
+      margin-right: 12px;
+      font-size: 14px;
+    }
+    .form-row input[type="text"],
+    .form-row input[type="number"],
+    .form-row input[type="date"],
+    .form-row select {
+      padding: 6px 10px;
+      width: 250px;
+      font-size: 14px;
+    }
+    .form-row input[type="file"] {
+      font-size: 13px;
+    }
+    .buttons {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .buttons button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      font-size: 14px;
+    }
+    .buttons button:hover {
+      background-color: #2980b9;
+    }
+    .agent-level label {
+      margin-right: 15px;
+      font-size: 14px;
+    }
+    #uploadPreview {
+      align-items: flex-start;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 212px;
+      margin-bottom: 12px;
+    }
+    .checkbox-row input[type="checkbox"] {
+      margin-right: 6px;
+    }
+    .agent-level {
+      margin-left: 212px;
+    }
+    .agent-level label {
+      margin-right: 20px;
+    }
+    #importedList {
+      font-size: 13px;
+      background: #f9f9f9;
+      padding: 6px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h3>Commission Plan</h3>
+  <ul>
+    <li onclick="showMainTab('regular')">Regular Plan</li>
+    <li onclick="showMainTab('promo')">Promotional Plan</li>
+  </ul>
+</div>
+
+<div class="content">
+  <div id="regularTab" class="tab-content" style="display: none;">
+    <p>Regular Plan Configuration</p>
+  </div>
+
+  <div id="promoTab" class="tab-content">
+    <div class="promo-tabs">
+      <button class="tab-button active" onclick="switchPromoTab('invite')">New User Incentive</button>
+      <button class="tab-button" onclick="switchPromoTab('game')">Game Promotion</button>
+      <button class="tab-button" onclick="switchPromoTab('challenge')">Quarterly Challenge</button>
+    </div>
+
+    <!-- Invite Tab -->
+    <div class="tab-content" id="promo-invite">
+      <div class="form-group-title">Basic Settings</div>
+
+      <div class="form-row">
+        <label>Incentive Plan Name:</label>
+        <input type="text" placeholder="e.g. Spring Launch Bonus" />
+      </div>
+
+      <div class="form-row">
+        <label>Settlement Cycle:</label>
+        <select>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Valid Period:</label>
+        <input type="date" style="width: 120px;" />&nbsp;to&nbsp;
+        <input type="date" style="width: 120px;" />
+      </div>
+
+      <div class="form-group-title">Target Agents</div>
+
+      <div class="form-row">
+        <label>Apply To:</label>
+        <select id="agentScopeSelect" onchange="toggleAgentOptions()">
+          <option value="all">All Agents</option>
+          <option value="custom">Specified Agents</option>
+          <option value="level">By Agent Level</option>
+        </select>
+      </div>
+
+      <div class="form-row agent-custom" style="display: none;">
+        <label>Agent Account(s):</label>
+        <input type="text" id="agentAccountsInput" placeholder="e.g. agent001;agent002" />
+      </div>
+
+      <div class="form-row agent-custom" style="display: none;">
+        <label>Import From File:</label>
+        <input type="file" accept=".txt" onchange="handleFileUpload(event)" />
+      </div>
+
+      <div class="form-row agent-custom" id="uploadPreview" style="display: none;">
+        <label>Imported:</label>
+        <div id="importedList"></div>
+      </div>
+
+      <div class="agent-level" style="display: none;">
+        <label><input type="checkbox" name="agentLevel" value="1" /> Level 1</label>
+        <label><input type="checkbox" name="agentLevel" value="2" /> Level 2</label>
+        <label><input type="checkbox" name="agentLevel" value="3" /> Level 3</label>
+      </div>
+
+      <div class="form-group-title">Reward Conditions</div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="chkDeposit" />
+        <label for="chkDeposit">First Deposit ≥</label>
+        <input type="number" placeholder="e.g. 100" />
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="chkBet" />
+        <label for="chkBet">First Bet Amount ≥</label>
+        <input type="number" placeholder="e.g. 1000" />
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="chkKYC" />
+        <label for="chkKYC">eKYC Status:</label>
+        <select>
+          <option value="all">ALL</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="form-group-title">Reward</div>
+
+      <div class="form-row">
+        <label>Bonus / Per User (PHP):</label>
+        <input type="number" placeholder="e.g. 88" />
+      </div>
+      
+       <div class="form-row">
+         <label>Total Bonus Limit：</label>
+        <input type="number" placeholder="e.g. 88" />
+      </div>
+
+      <div class="buttons">
+        <button onclick="alert('Incentive plan saved')">Save Settings</button>
+        <button onclick="location.reload()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Other Tabs -->
+    <div class="tab-content" id="promo-game" style="display: none;">
+      <p>Game Promotion Settings (Coming Soon)</p>
+    </div>
+
+    <div class="tab-content" id="promo-challenge" style="display: none;">
+      <p>Quarterly Challenge Settings (Coming Soon)</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchPromoTab(tab) {
+    ['invite', 'game', 'challenge'].forEach(id => {
+      document.getElementById('promo-' + id).style.display = 'none';
+    });
+    document.getElementById('promo-' + tab).style.display = 'block';
+
+    document.querySelectorAll('.promo-tabs .tab-button').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function showMainTab(tab) {
+    document.getElementById('regularTab').style.display = (tab === 'regular') ? 'block' : 'none';
+    document.getElementById('promoTab').style.display = (tab === 'promo') ? 'block' : 'none';
+  }
+
+  function toggleAgentOptions() {
+    const val = document.getElementById('agentScopeSelect').value;
+    document.querySelectorAll('.agent-custom').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.agent-level').forEach(el => el.style.display = 'none');
+
+    if (val === 'custom') {
+      document.querySelectorAll('.agent-custom').forEach(el => el.style.display = 'flex');
+    } else if (val === 'level') {
+      document.querySelectorAll('.agent-level').forEach(el => el.style.display = 'flex');
+    }
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const content = e.target.result;
+      const accounts = content.split(/[\n\r;]+/).map(s => s.trim()).filter(Boolean);
+      document.getElementById('importedList').innerText = accounts.join('; ');
+      document.getElementById('uploadPreview').style.display = 'flex';
+    };
+    reader.readAsText(file);
+  }
+</script>
+
+</body>
+</html>
