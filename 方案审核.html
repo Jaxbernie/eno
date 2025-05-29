@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commission Plan Approval System</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 0 4px;
+    }
+    .btn-approve { background: #4caf50; color: white; }
+    .btn-disabled { background: #ccc; color: white; cursor: not-allowed; }
+    .modal {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+      justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: white; padding: 20px; border-radius: 6px;
+      width: 420px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    textarea, input {
+      width: 100%; padding: 8px; font-size: 14px; margin-top: 10px;
+      box-sizing: border-box;
+    }
+    .modal-buttons {
+      text-align: right; margin-top: 14px;
+    }
+    .modal-buttons .btn { margin-left: 10px; }
+    .approval-summary {
+      background: #f0f0f0; padding: 10px; border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #333;
+      white-space: pre-wrap;
+    }
+    .radio-group {
+      margin-top: 10px;
+      font-size: 14px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .radio-group label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap; /* prevent line break */
+    }
+    .radio-group input[type="radio"] {
+      margin: 0;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Commission Plan Approval List</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Remark</th>
+      <th>Auditor</th>
+      <th>Audit Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-status="Pending" data-summary="Main commission parameters of the current plan: Basic commission 10%, advanced commission 15%.">
+      <td class="status">Pending</td>
+      <td class="remark">-</td>
+      <td class="auditor">-</td>
+      <td class="audit-time">-</td>
+      <td>
+        <button class="btn btn-approve" onclick="openModal(this)">Approve</button>
+        <button class="btn">Edit</button>
+        <button class="btn">Delete</button>
+      </td>
+    </tr>
+    <tr data-status="Approved" data-summary="Main commission parameters of the current plan: Advanced commission 15%.">
+      <td class="status">Approved</td>
+      <td class="remark">Reasonable plan</td>
+      <td class="auditor">John Smith</td>
+      <td class="audit-time">2025-05-29 15:00</td>
+      <td>
+        <button class="btn btn-disabled" disabled>Approve</button>
+        <button class="btn">Edit</button>
+        <button class="btn">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Approval Modal -->
+<div class="modal" id="approvalModal">
+  <div class="modal-content">
+    <h3>Approval Operation</h3>
+
+    <div class="approval-summary" id="approvalSummary">
+      <!-- Summary content -->
+    </div>
+
+    <label>Approval Remark <span style="color:red">*</span></label>
+    <textarea id="approvalRemark" placeholder="Please enter your approval remarks..." required></textarea>
+
+    <div class="radio-group">
+      <label><input type="radio" name="approvalResult" value="Approved" checked>Approve</label>
+      <label><input type="radio" name="approvalResult" value="Rejected">Reject</label>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-approve" onclick="submitApproval()">Confirm Approval</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentRow = null;
+
+  function openModal(button) {
+    currentRow = button.closest('tr');
+    const summary = currentRow.getAttribute('data-summary') || 'No summary available.';
+    document.getElementById('approvalSummary').textContent = summary;
+
+    document.getElementById('approvalRemark').value = '';
+    // Default select Approve
+    document.querySelector('input[name="approvalResult"][value="Approved"]').checked = true;
+
+    document.getElementById('approvalModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('approvalModal').style.display = 'none';
+  }
+
+  function submitApproval() {
+    const remark = document.getElementById('approvalRemark').value.trim();
+    if (!remark) {
+      alert("Approval remark is required!");
+      return;
+    }
+
+    const result = document.querySelector('input[name="approvalResult"]:checked').value;
+    const time = new Date();
+    const timeStr = time.toLocaleString('en-GB', { hour12: false });
+    const user = "John Smith"; // Example auditor
+
+    // Update status
+    currentRow.querySelector('.status').textContent = result;
+    currentRow.setAttribute('data-status', result);
+
+    // Remark only stores approval remark text
+    currentRow.querySelector('.remark').textContent = remark;
+
+    // Update auditor and audit time
+    currentRow.querySelector('.auditor').textContent = user;
+    currentRow.querySelector('.audit-time').textContent = timeStr;
+
+    // Disable approval button
+    const approveBtn = currentRow.querySelector('.btn-approve');
+    approveBtn.disabled = true;
+    approveBtn.classList.add('btn-disabled');
+    approveBtn.textContent = 'Approve';
+
+    closeModal();
+  }
+
+  document.getElementById('approvalModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+
+</body>
+</html>
