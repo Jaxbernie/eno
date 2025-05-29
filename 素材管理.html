@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Promotion Material Management</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+  h2 { margin-bottom: 16px; }
+  .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 0 12px rgb(0 0 0 / 0.1); }
+
+  /* Upload area */
+  form#uploadForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  form#uploadForm input[type="text"],
+  form#uploadForm select,
+  form#uploadForm input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  form#uploadForm input[type="text"] {
+    flex: 1 1 180px;
+    min-width: 180px;
+  }
+  form#uploadForm select {
+    width: 140px;
+  }
+  form#uploadForm input[type="file"] {
+    flex: 1 1 160px;
+  }
+  form#uploadForm button {
+    background: #2f80ed;
+    color: white;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  form#uploadForm button:hover {
+    background: #1366d6;
+  }
+
+  /* Filter section */
+  #filterSection {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  #filterSection label {
+    font-size: 14px;
+    margin-right: 6px;
+  }
+  #filterSection select,
+  #filterSection input[type="date"] {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  #filterSection button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  #filterSection button:hover {
+    background: #1e8c4b;
+  }
+
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.08);
+  }
+  thead {
+    background: #f0f0f0;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    font-size: 14px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  th {
+    font-weight: 600;
+    user-select: none;
+  }
+
+  /* Image preview */
+  .preview-img {
+    max-width: 100px;
+    max-height: 60px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
+  }
+
+  /* Status colors */
+  .status-unpublished { color: #f39c12; font-weight: 600; } /* Unpublished - orange */
+  .status-published { color: #27ae60; font-weight: 600; }   /* Published - green */
+  .status-disabled { color: #c0392b; font-weight: 600; }    /* Disabled - red */
+
+  /* Action buttons */
+  .btn {
+    padding: 6px 14px;
+    margin: 0 4px;
+    font-size: 13px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+  }
+  .btn-publish {
+    background-color: #27ae60;
+  }
+  .btn-publish:hover {
+    background-color: #1e8c4b;
+  }
+  .btn-disable {
+    background-color: #c0392b;
+  }
+  .btn-disable:hover {
+    background-color: #8e2a22;
+  }
+  .btn-disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+  }
+
+  /* Pagination */
+  #pagination {
+    margin-top: 18px;
+    text-align: right;
+  }
+  #pagination button {
+    padding: 6px 12px;
+    margin-left: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+  }
+  #pagination button:hover:not(.active) {
+    background: #f0f0f0;
+  }
+  #pagination button.active {
+    background: #2f80ed;
+    color: white;
+    border-color: #2f80ed;
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Promotion Material Management</h2>
+
+  <!-- Upload section -->
+  <form id="uploadForm">
+    <input type="text" name="title" placeholder="Material Title" required />
+    <input type="text" name="description" placeholder="Material Description" />
+    <select name="category" required>
+      <option value="">Select Category</option>
+      <option value="Campaign">Campaign</option>
+      <option value="Offer">Offer</option>
+      <option value="Holiday">Holiday</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="file" name="file" accept="image/*" required />
+    <button type="submit">Upload Material</button>
+  </form>
+
+  <!-- Filter section -->
+  <div id="filterSection">
+    <label for="filterCategory">Category:</label>
+    <select id="filterCategory">
+      <option value="">All</option>
+      <option value="Campaign">Campaign</option>
+      <option value="Offer">Offer</option>
+      <option value="Holiday">Holiday</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="filterDate">Upload Date:</label>
+    <input type="date" id="filterDate" />
+
+    <button id="btnFilter">Filter</button>
+    <button id="btnReset">Reset</button>
+  </div>
+
+  <!-- Material list table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Material Title</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Preview</th>
+        <th>Upload Date</th>
+        <th>Status</th>
+        <th>Download Count</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="materialTableBody">
+      <!-- Dynamic material rows -->
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div id="pagination">
+    <button disabled>&lt; Previous</button>
+    <button class="active">1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>Next &gt;</button>
+  </div>
+</div>
+
+<script>
+  // Sample material data (replace with backend API data)
+  const materials = [
+    {
+      title: "May Day First Deposit Campaign",
+      description: "Promo image for first deposit users",
+      category: "Campaign",
+      preview: "https://via.placeholder.com/100x60",
+      uploadTime: "2025-05-29",
+      status: "Unpublished",
+      downloads: 27,
+    },
+    {
+      title: "Holiday Promotion Poster",
+      description: "Dragon Boat Festival special offer",
+      category: "Holiday",
+      preview: "https://via.placeholder.com/100x60?text=Holiday",
+      uploadTime: "2025-05-20",
+      status: "Published",
+      downloads: 105,
+    },
+    {
+      title: "Coupon Push",
+      description: "Coupon distribution promo",
+      category: "Offer",
+      preview: "https://via.placeholder.com/100x60?text=Offer",
+      uploadTime: "2025-05-15",
+      status: "Disabled",
+      downloads: 56,
+    },
+  ];
+
+  const tbody = document.getElementById('materialTableBody');
+
+  function renderTable(data) {
+    tbody.innerHTML = "";
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8">No material data available</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      const tr = document.createElement('tr');
+
+      // Status class
+      let statusClass = '';
+      if (item.status === 'Unpublished') statusClass = 'status-unpublished';
+      else if (item.status === 'Published') statusClass = 'status-published';
+      else if (item.status === 'Disabled') statusClass = 'status-disabled';
+
+      tr.innerHTML = `
+        <td>${item.title}</td>
+        <td>${item.description}</td>
+        <td>${item.category}</td>
+        <td><img src="${item.preview}" alt="Preview" class="preview-img"/></td>
+        <td>${item.uploadTime}</td>
+        <td class="${statusClass}">${item.status}</td>
+        <td>${item.downloads}</td>
+        <td>
+          ${
+            item.status !== 'Published'
+              ? `<button class="btn btn-publish" onclick="changeStatus('${item.title}', 'Published')">Publish</button>`
+              : `<button class="btn btn-disable" onclick="changeStatus('${item.title}', 'Disabled')">Disable</button>`
+          }
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function changeStatus(title, newStatus) {
+    const item = materials.find(m => m.title === title);
+    if (!item) return;
+    item.status = newStatus;
+    renderTable(materials);
+  }
+
+  // Filter functionality
+  document.getElementById('btnFilter').addEventListener('click', () => {
+    const category = document.getElementById('filterCategory').value;
+    const date = document.getElementById('filterDate').value;
+
+    let filtered = materials;
+
+    if (category) {
+      filtered = filtered.filter(m => m.category === category);
+    }
+    if (date) {
+      filtered = filtered.filter(m => m.uploadTime === date);
+    }
+    renderTable(filtered);
+  });
+
+  // Reset filter
+  document.getElementById('btnReset').addEventListener('click', () => {
+    document.getElementById('filterCategory').value = '';
+    document.getElementById('filterDate').value = '';
+    renderTable(materials);
+  });
+
+  // Upload material simulation
+  document.getElementById('uploadForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const form = e.target;
+    const title = form.title.value.trim();
+    if (!title) {
+      alert('Material title cannot be empty');
+      return;
+    }
+    const category = form.category.value;
+    if (!category) {
+      alert('Please select a category');
+      return;
+    }
+    const fileInput = form.file;
+    if (fileInput.files.length === 0) {
+      alert('Please upload a file');
+      return;
+    }
+
+    // Simulate upload, in real app upload to backend & get URL and upload date
+    const newMaterial = {
+      title,
+      description: form.description.value.trim(),
+      category,
+      preview: URL.createObjectURL(fileInput.files[0]),
+      uploadTime: new Date().toISOString().slice(0, 10),
+      status: 'Unpublished',
+      downloads: 0,
+    };
+    materials.push(newMaterial);
+    renderTable(materials);
+    form.reset();
+    alert('Material uploaded successfully');
+  });
+
+  // Initial render
+  renderTable(materials);
+</script>
+</body>
+</html>
