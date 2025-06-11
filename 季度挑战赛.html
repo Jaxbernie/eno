@@ -198,15 +198,14 @@
         <input type="date" style="width: 120px;" />
       </div>
 
+      <!-- Business Lines -->
+      <div class="form-group-title">Business Lines</div>
+      <div class="agent-level">
+        <label><input type="checkbox" name="bizLine" value="AP" /> AP</label>
+        <label><input type="checkbox" name="bizLine" value="BP" /> BP</label>
+        <label><input type="checkbox" name="bizLine" value="GP" /> GP</label>
+      </div>
 
-        <!-- ⬇ 插入新增业务线区域 -->
-    <div class="form-group-title">Business Lines</div>
-    <div class="agent-level">
-      <label><input type="checkbox" name="bizLine" value="AP" /> AP</label>
-      <label><input type="checkbox" name="bizLine" value="BP" /> BP</label>
-      <label><input type="checkbox" name="bizLine" value="GP" /> GP</label>
-    </div>
-    <!-- ⬆ 插入结束 -->
       <div class="form-group-title">Target Agents</div>
       <div class="form-row">
         <label>Apply To:</label>
@@ -229,12 +228,10 @@
         <label><input type="radio" name="criteriaType" value="totalTurnover" onchange="onCriteriaTypeChange()" /> Total Turnover</label>
       </div>
 
-      <div id="criteriaLadders">
-        <!-- Ladder rows inserted here by JS -->
-      </div>
+      <div id="criteriaLadders"></div>
 
       <div class="buttons" style="margin-top: 10px;">
-        <button type="button" onclick="addLadderRow()">Add Ladder</button>
+        <button type="button" onclick="addLadderRow()">Add Tier</button>
       </div>
 
       <div class="buttons" style="margin-top: 20px;">
@@ -246,92 +243,83 @@
 </div>
 
 <script>
-  // Sidebar tab switch
   function showMainTab(tab) {
     document.getElementById('regularTab').style.display = tab === 'regular' ? 'block' : 'none';
     document.getElementById('promoTab').style.display = tab === 'promo' ? 'block' : 'none';
   }
 
-  // Promo tab switch
   function switchPromoTab(tab, event) {
-    const tabs = ['invite', 'game', 'challenge'];
-    tabs.forEach(t => {
-      document.getElementById('promo-' + t).style.display = t === tab ? 'block' : 'none';
+    ['invite','game','challenge'].forEach(id => {
+      document.getElementById('promo-' + id).style.display = id === tab ? 'block' : 'none';
     });
-    event.target.parentNode.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.promo-tabs .tab-button').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
   }
 
-  // Show/hide batch import based on "Apply To" select
   function onApplyToChange() {
     const val = document.getElementById('applyToSelect').value;
     document.getElementById('customAgentsSection').style.display = val === 'custom' ? 'block' : 'none';
   }
 
-  // Reset ladders on criteria type change
   function onCriteriaTypeChange() {
     const ladders = document.getElementById('criteriaLadders');
     ladders.innerHTML = '';
     addLadderRow();
   }
 
-  // Reward type change adjust input placeholder & description
+  function addLadderRow() {
+    const container = document.getElementById('criteriaLadders');
+    const count = container.children.length;
+    const box = document.createElement('div');
+    box.className = 'ladder-row form-row';
+    if (count === 0) {
+      box.innerHTML = `
+        <label>≥</label>
+        <input type="number" min="0" placeholder="Value" />
+        <select class="rewardType" onchange="onRewardTypeChange(this)">
+          <option value="cash">Cash Reward</option>
+          <option value="commission">Next Quarter Commission Bonus</option>
+        </select>
+        <input type="number" min="0" placeholder="Amount" class="reward-value-input" />
+        <span class="commission-desc" style="display:none; margin-left:8px; color:#555;"></span>
+      `;
+    } else {
+      box.innerHTML = `
+        <label>≥</label>
+        <input type="number" min="0" placeholder="Value" />
+        Tier ${count+1} (When Direct Member NGR ≥ <input type="number" placeholder="Threshold" style="width:80px;" />),
+        bonus + <input type="number" placeholder="%" style="width:60px;" />%
+        <button type="button" onclick="removeLadderRow(this)">Delete</button>
+      `;
+    }
+    container.appendChild(box);
+  }
+
+  function removeLadderRow(btn) {
+    const container = document.getElementById('criteriaLadders');
+    if (container.children.length <= 1) {
+      alert('The first tier cannot be deleted.');
+    } else {
+      btn.parentElement.remove();
+    }
+  }
+
   function onRewardTypeChange(select) {
     const parent = select.parentElement;
-    const commissionDesc = parent.querySelector('.commission-desc');
-    const rewardInput = parent.querySelector('input.reward-value-input');
+    const desc = parent.querySelector('.commission-desc');
+    const input = parent.querySelector('input.reward-value-input');
     if (select.value === 'commission') {
-      commissionDesc.style.display = 'inline-block';
-      rewardInput.placeholder = 'Percentage (%)';
-      rewardInput.min = 0;
-      rewardInput.max = 100;
-      rewardInput.step = 0.1;
+      desc.style.display = 'inline';
+      input.placeholder = 'Percentage (%)';
     } else {
-      commissionDesc.style.display = 'none';
-      rewardInput.placeholder = 'Amount';
-      rewardInput.min = 0;
-      rewardInput.removeAttribute('max');
-      rewardInput.removeAttribute('step');
+      desc.style.display = 'none';
+      input.placeholder = 'Amount';
     }
   }
 
-  // Add ladder row
-  function addLadderRow() {
-    const ladders = document.getElementById('criteriaLadders');
-    const ladderCount = ladders.children.length;
-
-    const row = document.createElement('div');
-    row.className = 'form-row ladder-row';
-
-    row.innerHTML = `
-      <label>≥</label>
-      <input type="number" min="0" placeholder="Value" style="width: 120px;" />
-      <select class="rewardType" onchange="onRewardTypeChange(this)">
-        <option value="cash">Cash Reward</option>
-        <option value="commission">Next Quarter Commission Bonus</option>
-      </select>
-      <input type="number" min="0" placeholder="Amount" class="reward-value-input" style="width: 120px;" />
-      <span class="commission-desc" style="display:none; margin-left:8px; color:#555;"></span>
-      ${ladderCount === 0 ? '' : '<button type="button" onclick="removeLadderRow(this)">Delete</button>'}
-    `;
-
-    ladders.appendChild(row);
-  }
-
-  // Delete ladder row, first row cannot be deleted
-  function removeLadderRow(button) {
-    const ladders = document.getElementById('criteriaLadders');
-    if (ladders.children.length <= 1) {
-      alert('The first ladder cannot be deleted.');
-      return;
-    }
-    button.parentElement.remove();
-  }
-
-  // Initialize page
-  window.onload = function () {
+  window.onload = () => {
     showMainTab('promo');
-    switchPromoTab('challenge', { target: document.querySelector('.promo-tabs button.active') });
+    switchPromoTab('challenge', {target: document.querySelector('.promo-tabs .tab-button.active')});
     onApplyToChange();
     onCriteriaTypeChange();
   };
