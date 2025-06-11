@@ -95,16 +95,16 @@
   </div>
 
   <div class="tab-content" id="tab-turnover" style="display: none;">
-    <p>保持不变</p>
+    <p>No changes.</p>
   </div>
 
   <div class="tab-content" id="tab-ggr" style="display: none;">
-    <p>保持不变</p>
+    <p>No changes.</p>
   </div>
 
   <div class="tab-content" id="tab-ngr">
     <div class="form-row">
-      <label><strong>Commission Plan Name:</strong></label>
+      <label><strong>Plan Name:</strong></label>
       <input type="text" placeholder="Enter plan name" />
     </div>
 
@@ -117,21 +117,21 @@
     </div>
 
     <div class="form-row">
-      <label><strong>Minimum First Deposit (PHP) to Activate:</strong></label>
+      <label><strong>Minimum First Deposit (PHP):</strong></label>
       <input type="number" placeholder="e.g. 100" />
     </div>
 
     <div class="form-row">
-      <label><strong>eKYC Completion Status:</strong></label>
+      <label><strong>eKYC Status:</strong></label>
       <select>
         <option value="all">All</option>
-        <option value="completed">Completed</option>
+        <option value="completed">Completed Only</option>
       </select>
     </div>
 
-    <h4>Tiered Commission Settings (By NGR)</h4>
+    <h4>Tiered Commission Settings (Based on NGR)</h4>
     <div id="tiers-container">
-      <!-- Tiers go here -->
+      <!-- Tiers will be added here -->
     </div>
     <button onclick="addTier()">+ Add Tier</button>
 
@@ -143,7 +143,6 @@
 </div>
 
 <script>
-  let currentTab = 'ngr';
   let tierIndex = 1;
 
   function switchTab(tab) {
@@ -162,35 +161,42 @@
     const tier = document.createElement('div');
     tier.className = 'tier-box';
 
-    tier.innerHTML = `
-      <div class="tier-header">Tier ${tierIndex} 
-        ${tierIndex === 1 ? '(Default Tier)' : '(When NGR ≥ <input type="number" name="ngr_min_${tierIndex}" style="width: 80px;" />)'}
-        ${tierIndex > 1 ? '<span class="remove-btn" onclick="this.parentElement.parentElement.remove()">Remove</span>' : ''}
-      </div>
+    if (tierIndex === 1) {
+      tier.innerHTML = `
+        <div class="tier-header">Tier 1 (Default Tier)</div>
+        <div class="form-row">
+          <strong>Level 1 Agent:</strong><br>
+          Direct Player = <input type="number" style="width: 60px;" /> %
+          Subordinate Player = <input type="number" style="width: 60px;" /> %
+          Third Level Player = <input type="number" style="width: 60px;" /> %
+        </div>
+        <div class="form-row">
+          <strong>Level 2 Agent:</strong><br>
+          Direct Player = <input type="number" style="width: 60px;" /> %
+          Subordinate Player = <input type="number" style="width: 60px;" /> %
+        </div>
+        <div class="form-row">
+          <strong>Level 3 Agent:</strong><br>
+          Direct Player = <input type="number" style="width: 60px;" /> %
+        </div>
+      `;
+    } else {
+      tier.innerHTML = `
+        <div class="tier-header">
+          Tier ${tierIndex} (When Direct Member NGR ≥ 
+          <input type="number" style="width: 80px;" placeholder="Amount" />
+          ), commission rate increases by 
+          <input type="number" style="width: 60px;" placeholder="%" /> %
+          <span class="remove-btn" onclick="this.parentElement.parentElement.remove()">Remove</span>
+        </div>
+      `;
+    }
 
-      <div class="form-row">
-        <strong>Level 1 Agent:</strong><br>
-        Direct Player = <input type="number" name="l1_direct_${tierIndex}" style="width: 60px;" /> %
-        Subordinate Player = <input type="number" name="l1_sub_${tierIndex}" style="width: 60px;" /> %
-        Third Level Player = <input type="number" name="l1_third_${tierIndex}" style="width: 60px;" /> %
-      </div>
-
-      <div class="form-row">
-        <strong>Level 2 Agent:</strong><br>
-        Direct Player = <input type="number" name="l2_direct_${tierIndex}" style="width: 60px;" /> %
-        Subordinate Player = <input type="number" name="l2_sub_${tierIndex}" style="width: 60px;" /> %
-      </div>
-
-      <div class="form-row">
-        <strong>Level 3 Agent:</strong><br>
-        Direct Player = <input type="number" name="l3_direct_${tierIndex}" style="width: 60px;" /> %
-      </div>
-    `;
     container.appendChild(tier);
     tierIndex++;
   }
 
-  // 默认添加一个初始阶梯
+  // Add default Tier 1 on page load
   addTier();
 </script>
 
