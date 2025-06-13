@@ -104,7 +104,6 @@
       width: auto;
       margin-right: 10px;
     }
-    /* Ladder configuration styles */
     .ladder-row {
       align-items: center;
     }
@@ -139,7 +138,6 @@
       color: #555;
       font-size: 12px;
     }
-    /* Custom agents batch import */
     #customAgentsSection {
       margin-left: 212px;
       margin-top: -12px;
@@ -154,7 +152,6 @@
   </style>
 </head>
 <body>
-
 <div class="sidebar">
   <h3>Commission Plan</h3>
   <ul>
@@ -162,24 +159,20 @@
     <li onclick="showMainTab('promo')">Promotional Plan</li>
   </ul>
 </div>
-
 <div class="content">
   <div id="regularTab" class="tab-content" style="display: none;">
     <p>Regular Plan Configuration</p>
   </div>
-
   <div id="promoTab" class="tab-content">
     <div class="promo-tabs">
       <button class="tab-button" onclick="switchPromoTab('invite', event)">New User Incentive</button>
       <button class="tab-button" onclick="switchPromoTab('game', event)">Limited-time Multiplier</button>
       <button class="tab-button active" onclick="switchPromoTab('challenge', event)">Quarterly Challenge</button>
     </div>
-
     <div class="tab-content" id="promo-invite" style="display:none;"></div>
     <div class="tab-content" id="promo-game" style="display:none;">
       <p>Limited-time Multiplier Content...</p>
     </div>
-
     <div class="tab-content" id="promo-challenge" style="display:block;">
       <div class="form-group-title">Basic Settings</div>
       <div class="form-row">
@@ -197,15 +190,12 @@
         <input type="date" style="width: 120px;" />&nbsp;to&nbsp;
         <input type="date" style="width: 120px;" />
       </div>
-
-      <!-- Business Lines -->
       <div class="form-group-title">Business Lines</div>
       <div class="agent-level">
         <label><input type="checkbox" name="bizLine" value="AP" /> AP</label>
         <label><input type="checkbox" name="bizLine" value="BP" /> BP</label>
         <label><input type="checkbox" name="bizLine" value="GP" /> GP</label>
       </div>
-
       <div class="form-group-title">Target Agents</div>
       <div class="form-row">
         <label>Apply To:</label>
@@ -215,25 +205,20 @@
           <option value="level">By Agent Level</option>
         </select>
       </div>
-
       <div id="customAgentsSection" style="display:none;">
         <label style="width:auto; margin-right: 12px; font-weight: bold;">Batch Import Agent IDs (one per line):</label><br />
         <textarea placeholder="Enter agent IDs separated by line breaks"></textarea>
       </div>
-
       <div class="form-group-title">Reward Settings</div>
       <div class="form-row">
         <label>Reward Basis:</label>
         <label><input type="radio" name="criteriaType" value="firstDeposit" checked onchange="onCriteriaTypeChange()" /> FD Usercount</label>
         <label><input type="radio" name="criteriaType" value="totalTurnover" onchange="onCriteriaTypeChange()" /> Total Turnover</label>
       </div>
-
       <div id="criteriaLadders"></div>
-
       <div class="buttons" style="margin-top: 10px;">
         <button type="button" onclick="addLadderRow()">Add Tier</button>
       </div>
-
       <div class="buttons" style="margin-top: 20px;">
         <button onclick="alert('Quarterly Challenge saved')">Save Settings</button>
         <button onclick="location.reload()">Cancel</button>
@@ -241,7 +226,6 @@
     </div>
   </div>
 </div>
-
 <script>
   function showMainTab(tab) {
     document.getElementById('regularTab').style.display = tab === 'regular' ? 'block' : 'none';
@@ -264,55 +248,50 @@
   function onCriteriaTypeChange() {
     const ladders = document.getElementById('criteriaLadders');
     ladders.innerHTML = '';
-    addLadderRow();
+    addLadderRow(true); // 添加首条，禁止删除
   }
 
-  function addLadderRow() {
+  function addLadderRow(isFirst = false) {
     const container = document.getElementById('criteriaLadders');
-    const count = container.children.length;
     const box = document.createElement('div');
     box.className = 'ladder-row form-row';
-    if (count === 0) {
-      box.innerHTML = `
-        <label>≥</label>
-        <input type="number" min="0" placeholder="Value" />
-        <select class="rewardType" onchange="onRewardTypeChange(this)">
-          <option value="cash">Cash Reward</option>
-          <option value="commission">Next Quarter Commission Bonus</option>
-        </select>
-        <input type="number" min="0" placeholder="Amount" class="reward-value-input" />
-        <span class="commission-desc" style="display:none; margin-left:8px; color:#555;"></span>
-      `;
-    } else {
-      box.innerHTML = `
-        <label>≥</label>
-        <input type="number" min="0" placeholder="Value" />
-        Tier ${count+1} (When Direct Member NGR ≥ <input type="number" placeholder="Threshold" style="width:80px;" />),
-        bonus + <input type="number" placeholder="%" style="width:60px;" />%
-        <button type="button" onclick="removeLadderRow(this)">Delete</button>
-      `;
-    }
+
+    box.innerHTML = `
+      <label>≥</label>
+      <input type="number" min="0" placeholder="Value" />
+      <select class="rewardType" onchange="onRewardTypeChange(this)">
+        <option value="cash">Cash Reward</option>
+        <option value="commission">Next Quarter Commission Bonus</option>
+      </select>
+      <input type="number" min="0" placeholder="Amount" class="reward-value-input" />
+      <span class="reward-percent-symbol" style="display:none; margin-left:4px;">%</span>
+      ${isFirst ? '' : '<button type="button" onclick="removeLadderRow(this)">Delete</button>'}
+    `;
+
     container.appendChild(box);
   }
 
   function removeLadderRow(btn) {
     const container = document.getElementById('criteriaLadders');
-    if (container.children.length <= 1) {
+    const rows = Array.from(container.children);
+    const row = btn.parentElement;
+    if (rows.indexOf(row) === 0) {
       alert('The first tier cannot be deleted.');
     } else {
-      btn.parentElement.remove();
+      row.remove();
     }
   }
 
   function onRewardTypeChange(select) {
     const parent = select.parentElement;
-    const desc = parent.querySelector('.commission-desc');
+    const percentSymbol = parent.querySelector('.reward-percent-symbol');
     const input = parent.querySelector('input.reward-value-input');
+
     if (select.value === 'commission') {
-      desc.style.display = 'inline';
-      input.placeholder = 'Percentage (%)';
+      percentSymbol.style.display = 'inline';
+      input.placeholder = 'Percentage';
     } else {
-      desc.style.display = 'none';
+      percentSymbol.style.display = 'none';
       input.placeholder = 'Amount';
     }
   }
@@ -321,9 +300,11 @@
     showMainTab('promo');
     switchPromoTab('challenge', {target: document.querySelector('.promo-tabs .tab-button.active')});
     onApplyToChange();
-    onCriteriaTypeChange();
+    onCriteriaTypeChange(); // 初始化时添加第一条（不可删除）
   };
 </script>
+
+
 
 </body>
 </html>
