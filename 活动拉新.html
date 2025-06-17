@@ -257,6 +257,13 @@
         <input type="number" placeholder="e.g. 88" />
       </div>
 
+      <label>Mutually Exclusive With:</label>
+      <div class="checkbox-group">
+      <label><input type="checkbox" name="exclusive[]" value="multiplier"> Limited-time Multiplier</label>
+      <label><input type="checkbox" name="exclusive[]" value="quarterly"> Quarterly Challenge</label>
+      
+      </div>
+
       <div class="buttons">
         <button onclick="alert('Incentive plan saved')">Save Settings</button>
         <button onclick="location.reload()">Cancel</button>
