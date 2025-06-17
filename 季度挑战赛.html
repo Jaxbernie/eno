@@ -219,6 +219,15 @@
       <div class="buttons" style="margin-top: 10px;">
         <button type="button" onclick="addLadderRow()">Add Tier</button>
       </div>
+
+        <label>Mutually Exclusive With:</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="exclusive[]" value="multiplier"> Limited-time Multiplier</label>
+      <label><input type="checkbox" name="exclusive[]" value="quarterly"> New User Incentive</label>
+      
+    </div>
+
+      
       <div class="buttons" style="margin-top: 20px;">
         <button onclick="alert('Quarterly Challenge saved')">Save Settings</button>
         <button onclick="location.reload()">Cancel</button>
