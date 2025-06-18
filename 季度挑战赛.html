@@ -219,13 +219,44 @@
       <div class="buttons" style="margin-top: 10px;">
         <button type="button" onclick="addLadderRow()">Add Tier</button>
       </div>
+      
+        <!-- 新增奖励到账钱包 -->  
+      <div class="form-group-title">
+         <label>Cash Reward Into Wallet：</label>
+        <input type="checkbox"> Commission wallet
+        <input type="checkbox"> Balance wallet
+        
+      </div>
 
+	<div class="form-group-title">
         <label>Mutually Exclusive With:</label>
+          </div>
     <div class="checkbox-group">
       <label><input type="checkbox" name="exclusive[]" value="multiplier"> Limited-time Multiplier</label>
       <label><input type="checkbox" name="exclusive[]" value="quarterly"> New User Incentive</label>
       
     </div>
+    
+    <!-- 启用通知 -->  
+  <p style="margin: 8px 0 12px 26px; color: #666; font-size: 14px;"></p>
+      
+ <div class="form-group-title">
+    <input type="checkbox" >
+    Reward Notification（Only Cash Reward）
+    </div>
+  </label>
+  <p style="margin: 8px 0 12px 26px; color: #666; font-size: 14px;">
+    
+  </p>
+
+
+    <!-- 自定义内容 -->
+    <label style="font-weight: bold; ">Notification Title：</label>
+    <textarea name="notify-message" rows="1"  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+    <label style="font-weight: bold; ">Notification content：</label>
+    <textarea name="notify-message" rows="5" placeholder="For example: Congratulations on winning the reward for this event!。" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+  </div>
+</div>
 
       
       <div class="buttons" style="margin-top: 20px;">
