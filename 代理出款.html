@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Withdrawal Proposal</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { margin-bottom: 10px; display: inline-block; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .filter-bar, .top-actions { margin-bottom: 10px; }
+    .filter-bar label { margin-right: 10px; }
+    .btn { padding: 6px 12px; cursor: pointer; }
+    #modal {
+      display: none; position: fixed; top: 30%; left: 50%;
+      transform: translate(-50%, -30%); background: white; padding: 20px;
+      border: 1px solid #aaa; box-shadow: 0 0 10px rgba(0,0,0,0.2); width: 300px;
+    }
+    #modal textarea { width: 100%; margin-top: 5px; margin-bottom: 10px; padding: 6px; resize: vertical; }
+    .btn-green { background-color: #4CAF50; color: white; }
+    .btn-red { background-color: #f44336; color: white; }
+  </style>
+</head>
+<body>
+  <h2>Withdrawal Proposal</h2>
+
+  <div class="filter-bar">
+    <label>Application Time: <input type="date" /></label>
+    <label>Payout Time: <input type="date" /></label>
+    <label>Status:
+      <select>
+        <option value="">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="top-actions">
+    <button class="btn" onclick="openBatchReview()">Batch Review</button>
+    <button class="btn" onclick="exportToCSV()">Export</button>
+  </div>
+
+  <table id="withdrawalTable">
+    <thead>
+      <tr>
+        <th><input type="checkbox" onclick="toggleAll(this)" /></th>
+        <th>Applicant</th>
+        <th>Application Time</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Payout Time</th>
+        <th>Reviewer</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div id="modal">
+    <label>Review Notes:</label>
+    <textarea id="reviewNote" rows="4" placeholder="Enter notes..."></textarea>
+    <button id="reviewBtn" class="btn">Confirm</button>
+    <button class="btn" onclick="closeModal()">Cancel</button>
+  </div>
+
+  <script>
+    const currentUser = "admin_user";
+    let currentReviewIndex = null;
+    let currentReviewStatus = '';
+    const tableBody = document.getElementById('tableBody');
+
+    const data = [
+      { applicant: 'agent_001', time: ts(), amount: 500, status: 'Pending', payout: '-', reviewer: '' },
+      { applicant: 'agent_001', time: ts(), amount: 800, status: 'Approved', payout: ts(), reviewer: 'adminA' },
+      { applicant: 'agent_002', time: ts(), amount: 300, status: 'Pending', payout: '-', reviewer: '' },
+      { applicant: 'agent_003', time: ts(), amount: 600, status: 'Rejected', payout: '-', reviewer: 'adminB' }
+    ];
+
+    function ts() {
+      return new Date().toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+      data.forEach((item, index) => {
+        tableBody.innerHTML += `
+          <tr data-index="${index}">
+            <td><input type="checkbox" class="row-check" /></td>
+            <td>${item.applicant}</td>
+            <td>${item.time}</td>
+            <td>${item.amount}</td>
+            <td>${item.status}</td>
+            <td>${item.payout}</td>
+            <td>${item.reviewer || '-'}</td>
+            <td>
+              ${item.status === 'Pending' ? `
+                <button class="btn btn-green" onclick="openReviewModal(${index}, 'Approved')">Approve</button>
+                <button class="btn btn-red" onclick="openReviewModal(${index}, 'Rejected')">Reject</button>
+              ` : '-'}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function openReviewModal(index, status) {
+      currentReviewIndex = index;
+      currentReviewStatus = status;
+      document.getElementById('reviewNote').value = '';
+      const reviewBtn = document.getElementById('reviewBtn');
+      reviewBtn.innerText = status === 'Approved' ? 'Approve' : 'Reject';
+      reviewBtn.className = `btn ${status === 'Approved' ? 'btn-green' : 'btn-red'}`;
+      document.getElementById('modal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    function confirmReview() {
+      const note = document.getElementById('reviewNote').value.trim();
+      if (!note) {
+        alert('Please enter review notes.');
+        return;
+      }
+      if (currentReviewIndex !== null) {
+        data[currentReviewIndex].status = currentReviewStatus;
+        data[currentReviewIndex].payout = currentReviewStatus === 'Approved' ? ts() : '-';
+        data[currentReviewIndex].reviewer = currentUser;
+      }
+      renderTable();
+      closeModal();
+    }
+
+    document.getElementById('reviewBtn').onclick = confirmReview;
+
+    function toggleAll(master) {
+      document.querySelectorAll('.row-check').forEach(cb => cb.checked = master.checked);
+    }
+
+    function openBatchReview() {
+      const selected = Array.from(document.querySelectorAll('.row-check')).map((cb, i) => cb.checked ? i : null).filter(i => i !== null);
+      if (!selected.length) {
+        alert('Please select at least one record.');
+        return;
+      }
+      const note = prompt('Enter review note:');
+      if (!note) return;
+      selected.forEach(i => {
+        if (data[i].status === 'Pending') {
+          data[i].status = 'Approved';
+          data[i].payout = ts();
+          data[i].reviewer = currentUser;
+        }
+      });
+      renderTable();
+    }
+
+    function exportToCSV() {
+      let csv = "Applicant,Application Time,Amount,Status,Payout Time,Reviewer\n";
+      data.forEach(item => {
+        csv += `${item.applicant},${item.time},${item.amount},${item.status},${item.payout},${item.reviewer || '-'}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "withdrawal_proposals.csv";
+      link.click();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
