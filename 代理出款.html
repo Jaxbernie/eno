@@ -26,6 +26,7 @@
   <h2>Withdrawal Proposal</h2>
 
   <div class="filter-bar">
+    <label>Applicant: <input type="text" id="filterApplicant" placeholder="Enter Applicant" /></label>
     <label>Application Time: <input type="date" /></label>
     <label>Payout Time: <input type="date" /></label>
     <label>Status:
@@ -51,8 +52,11 @@
         <th>Application Time</th>
         <th>Amount</th>
         <th>Status</th>
+        <th>Payout Channel</th>
+        <th>Payment Account</th>
         <th>Payout Time</th>
         <th>Reviewer</th>
+        <th>Review Notes</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -73,14 +77,18 @@
     const tableBody = document.getElementById('tableBody');
 
     const data = [
-      { applicant: 'agent_001', time: ts(), amount: 500, status: 'Pending', payout: '-', reviewer: '' },
-      { applicant: 'agent_001', time: ts(), amount: 800, status: 'Approved', payout: ts(), reviewer: 'adminA' },
-      { applicant: 'agent_002', time: ts(), amount: 300, status: 'Pending', payout: '-', reviewer: '' },
-      { applicant: 'agent_003', time: ts(), amount: 600, status: 'Rejected', payout: '-', reviewer: 'adminB' }
+      { applicant: 'agent_001', time: ts(), amount: 500, status: 'Pending', channel: 'Bank Account', account: '1234567890123456', payout: '-', reviewer: '', note: '' },
+      { applicant: 'agent_001', time: ts(), amount: 800, status: 'Approved', channel: 'GCash', account: '9988776655443322', payout: ts(), reviewer: 'adminA', note: 'Approved quickly' },
+      { applicant: 'agent_002', time: ts(), amount: 300, status: 'Pending', channel: 'Bank Account', account: '1111222233334444', payout: '-', reviewer: '', note: '' },
+      { applicant: 'agent_003', time: ts(), amount: 600, status: 'Rejected', channel: 'GCash', account: '4444333322221111', payout: '-', reviewer: 'adminB', note: 'Invalid account format' }
     ];
 
     function ts() {
       return new Date().toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    function maskAccount(account) {
+      return account.slice(0, 4) + ' 8888 8888 ' + account.slice(-4);
     }
 
     function renderTable() {
@@ -93,8 +101,11 @@
             <td>${item.time}</td>
             <td>${item.amount}</td>
             <td>${item.status}</td>
+            <td>${item.channel}</td>
+            <td>${maskAccount(item.account)}</td>
             <td>${item.payout}</td>
             <td>${item.reviewer || '-'}</td>
+            <td>${item.note || '-'}</td>
             <td>
               ${item.status === 'Pending' ? `
                 <button class="btn btn-green" onclick="openReviewModal(${index}, 'Approved')">Approve</button>
@@ -127,9 +138,11 @@
         return;
       }
       if (currentReviewIndex !== null) {
-        data[currentReviewIndex].status = currentReviewStatus;
-        data[currentReviewIndex].payout = currentReviewStatus === 'Approved' ? ts() : '-';
-        data[currentReviewIndex].reviewer = currentUser;
+        const item = data[currentReviewIndex];
+        item.status = currentReviewStatus;
+        item.payout = currentReviewStatus === 'Approved' ? ts() : '-';
+        item.reviewer = currentUser;
+        item.note = note;
       }
       renderTable();
       closeModal();
@@ -154,15 +167,16 @@
           data[i].status = 'Approved';
           data[i].payout = ts();
           data[i].reviewer = currentUser;
+          data[i].note = note;
         }
       });
       renderTable();
     }
 
     function exportToCSV() {
-      let csv = "Applicant,Application Time,Amount,Status,Payout Time,Reviewer\n";
+      let csv = "Applicant,Application Time,Amount,Status,Payout Channel,Payment Account,Payout Time,Reviewer,Review Notes\n";
       data.forEach(item => {
-        csv += `${item.applicant},${item.time},${item.amount},${item.status},${item.payout},${item.reviewer || '-'}\n`;
+        csv += `${item.applicant},${item.time},${item.amount},${item.status},${item.channel},${item.account},${item.payout},${item.reviewer || '-'},${item.note || '-'}\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
